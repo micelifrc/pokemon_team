@@ -9,6 +9,7 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <memory>
 
 class Pokemon {
 public:
@@ -45,6 +46,7 @@ public:
 
    explicit Pokemon(unsigned id_ = 0, std::string name_ = "", Type type1 = Type::Nothing, Type type2 = Type::Nothing) :
          _id{id_}, _name{std::move(name_)}, _types{type1, type2} {}
+
    explicit Pokemon(int id_, std::string name_ = "", Type type1 = Type::Nothing, Type type2 = Type::Nothing) :
          _id{static_cast<unsigned>(id_)}, _name{std::move(name_)}, _types{type1, type2} {}
 
@@ -73,57 +75,73 @@ private:
 };
 
 bool operator<(const Pokemon &lhs, const Pokemon &rhs);
+
 bool operator>(const Pokemon &lhs, const Pokemon &rhs);
+
 bool operator<=(const Pokemon &lhs, const Pokemon &rhs);
+
 bool operator>=(const Pokemon &lhs, const Pokemon &rhs);
+
 bool operator==(const Pokemon &lhs, const Pokemon &rhs);
+
 bool operator!=(const Pokemon &lhs, const Pokemon &rhs);
+
 std::ostream &operator<<(std::ostream &os, const Pokemon &poke);
 
 // This class represents a subset of a pokedex of a certain region
 class Pokedex {
 public:
-   typedef std::pair<Pokemon::Type, Pokemon::Type> TypePair;
-   typedef unsigned long Index;
 
-   inline const std::vector<std::pair<Pokemon, Index>> &all_pokemon() const;
+   Pokedex();
 
-   inline const std::vector<std::pair<TypePair, std::vector<Index>>> &all_type_pairs() const;
+   const std::vector<const Pokemon *> &representatives() const { return _representatives; }
 
    template<typename... Args>
-   void add_pokemon(Args... args);  // should also add a remove_pokemon(std::string) method
+   void add_pokemon(Args... args);
+
+   template<typename... Args>
+   void remove_pokemon(Args... args);
+
+   // extracts the vector of representatives. If you use add_pokemon or remove_pokemon,
+   // @p _representatives will be wrong until you call extract_representatives again
+   void extract_representatives();
 
 private:
-   // each pokemon of the pokedex appears as first, and its type is in _all_type_pairs[second].first
-   std::vector<std::pair<Pokemon, Index>> _all_pokemon;
-   // all the pairs of types (non-sorted) in the pokedex, with the list of indices of pokemon with that type-pair
-   std::vector<std::pair<TypePair, std::vector<Index>>> _all_type_pairs;
+   // A matrix containing pointers to vectors containing all the pokemon for that pair of type in the pokedex
+   // The order of the types is not relevant, and if a pokemon is single-type, it is in the diagonal of the matrix
+   std::vector<std::vector<std::shared_ptr<std::vector<Pokemon> > > > _matrix;
+   // One pokemon for each pair of types in the pokedex
+   std::vector<const Pokemon *> _representatives;
 };
-
-const std::vector<std::pair<Pokemon, Pokedex::Index>> &Pokedex::all_pokemon() const {
-   return _all_pokemon;
-}
-
-const std::vector<std::pair<Pokedex::TypePair, std::vector<Pokedex::Index>>> &Pokedex::all_type_pairs() const {
-   return _all_type_pairs;
-}
 
 template<typename... Args>
 void Pokedex::add_pokemon(Args... args) {
    Pokemon poke{args...};
-   TypePair types =
-         poke.types().first < poke.types().second ? TypePair{poke.types().first, poke.types().second} : TypePair{
-               poke.types().second, poke.types().first};
-   for (unsigned long type_idx = 0; type_idx != _all_type_pairs.size(); ++type_idx) {
-      if (types.first == _all_type_pairs[type_idx].first.first and
-          types.second == _all_type_pairs[type_idx].first.second) {
-         _all_type_pairs[type_idx].second.emplace_back(_all_pokemon.size());
-         _all_pokemon.emplace_back(poke, type_idx);
+   Pokemon::Type second_type = (poke.types().second == Pokemon::Type::Nothing) ? poke.types().first
+                                                                               : poke.types().second;
+   for (const auto &similar_poke: *_matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]) {
+      if (similar_poke == poke) {
          return;
       }
    }
-   _all_type_pairs.emplace_back(types, std::vector<Index>(1, _all_pokemon.size()));
-   _all_pokemon.emplace_back(poke, _all_type_pairs.size() - 1);
+   _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]->emplace_back(poke);
+}
+
+template<typename... Args>
+void Pokedex::remove_pokemon(Args... args) {
+   Pokemon poke{args...};
+   Pokemon::Type second_type = (poke.types().second == Pokemon::Type::Nothing) ? poke.types().first
+                                                                               : poke.types().second;
+   unsigned idx = 0;
+   while (idx != _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]->size()) {
+      if ((*_matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)])[idx] == poke) {
+         (*_matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)])[idx] =
+               _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]->back();
+         _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]->pop_back();
+      } else {
+         ++idx;
+      }
+   }
 }
 
 class PokeTeam {

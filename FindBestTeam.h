@@ -12,8 +12,9 @@ class FindBestTeam {
 public:
    FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
                 bool consider_defence_ = true, bool consider_offence_ = false, int filter_factor_ = 1,
-                unsigned last_generation_to_include_ = 3, bool include_starters_ = true, bool include_ancients_ = false,
-                bool include_semilegendaries_ = false, bool include_legendaries_ = false);
+                unsigned last_generation_to_include_ = 3, bool include_starters_ = false,
+                bool include_ancients_ = false, bool include_semilegendaries_ = false,
+                bool include_legendaries_ = false);
 
    // Will find the best possible team, for the first _num_fixed_pokemon already fixed in _current_team
    int operator()();

@@ -50,6 +50,7 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
    if (last_generation_to_include_ >= 3) {
       add_hoenn_pokedex(_pokedex, include_starters_, include_ancients_, include_semilegendaries_, include_legendaries_);
    }
+   _pokedex.extract_representatives();
 }
 
 int FindBestTeam::operator()() {
@@ -73,8 +74,8 @@ void FindBestTeam::find_best_team_loop_iter(unsigned already_in_team, unsigned l
          _best_teams = std::vector<PokeTeam>(1, _current_team);
       }
    } else {
-      for (unsigned long poke_idx = next_to_try; poke_idx < _pokedex.all_type_pairs().size(); ++poke_idx) {
-         _current_team[already_in_team] = _pokedex.all_pokemon()[_pokedex.all_type_pairs()[poke_idx].second.front()].first;
+      for (unsigned long poke_idx = next_to_try; poke_idx < _pokedex.representatives().size(); ++poke_idx) {
+         _current_team[already_in_team] = *_pokedex.representatives()[poke_idx];
          for (unsigned int type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
             int previous_scoring = (already_in_team == 0) ? 0 : _partial_scoring[already_in_team - 1][type_idx];
             _partial_scoring[already_in_team][type_idx] =
@@ -192,6 +193,7 @@ void FindBestTeam::add_johto_pokedex(Pokedex &pokedex, bool include_starters, bo
    pokedex.add_pokemon(164, "Noctowl", Pokemon::Type::Normal);
    pokedex.add_pokemon(166, "Ledian", Pokemon::Type::Bug, Pokemon::Type::Flying);
    pokedex.add_pokemon(168, "Ariados", Pokemon::Type::Bug, Pokemon::Type::Poison);
+   pokedex.remove_pokemon(42, "Golbat", Pokemon::Type::Poison, Pokemon::Type::Flying);
    pokedex.add_pokemon(169, "Crobat", Pokemon::Type::Poison, Pokemon::Type::Flying);
    pokedex.add_pokemon(171, "Lanturn", Pokemon::Type::Water, Pokemon::Type::Electric);
    pokedex.add_pokemon(176, "Togetic", Pokemon::Type::Fairy, Pokemon::Type::Flying);
@@ -217,9 +219,11 @@ void FindBestTeam::add_johto_pokedex(Pokedex &pokedex, bool include_starters, bo
    pokedex.add_pokemon(205, "Forrtress", Pokemon::Type::Bug, Pokemon::Type::Steel);
    pokedex.add_pokemon(206, "Dunsparce", Pokemon::Type::Normal);
    pokedex.add_pokemon(207, "Gligar", Pokemon::Type::Ground, Pokemon::Type::Flying);
+   pokedex.remove_pokemon(95, "Onix", Pokemon::Type::Rock, Pokemon::Type::Ground);
    pokedex.add_pokemon(208, "Steelix", Pokemon::Type::Steel, Pokemon::Type::Ground);
    pokedex.add_pokemon(210, "Granbull", Pokemon::Type::Fairy);
    pokedex.add_pokemon(211, "Qwilfish", Pokemon::Type::Water, Pokemon::Type::Poison);
+   pokedex.remove_pokemon(123, "Scyther", Pokemon::Type::Bug, Pokemon::Type::Flying);
    pokedex.add_pokemon(212, "Scizor", Pokemon::Type::Bug, Pokemon::Type::Steel);
    pokedex.add_pokemon(213, "Shuckle", Pokemon::Type::Bug, Pokemon::Type::Rock);
    pokedex.add_pokemon(214, "Heracross", Pokemon::Type::Bug, Pokemon::Type::Fighting);
@@ -233,6 +237,7 @@ void FindBestTeam::add_johto_pokedex(Pokedex &pokedex, bool include_starters, bo
    pokedex.add_pokemon(226, "Mantine", Pokemon::Type::Water, Pokemon::Type::Flying);
    pokedex.add_pokemon(227, "Skarmory", Pokemon::Type::Steel, Pokemon::Type::Flying);
    pokedex.add_pokemon(229, "Houndoom", Pokemon::Type::Dark, Pokemon::Type::Fire);
+   pokedex.remove_pokemon(117, "Seadra", Pokemon::Type::Water);
    pokedex.add_pokemon(230, "Kingdra", Pokemon::Type::Water, Pokemon::Type::Dragon);
    pokedex.add_pokemon(232, "Donphan", Pokemon::Type::Ground);
    pokedex.add_pokemon(233, "Porygon2", Pokemon::Type::Normal);
@@ -240,6 +245,7 @@ void FindBestTeam::add_johto_pokedex(Pokedex &pokedex, bool include_starters, bo
    pokedex.add_pokemon(235, "Smeargle", Pokemon::Type::Normal);
    pokedex.add_pokemon(237, "Hitmontop", Pokemon::Type::Fighting);
    pokedex.add_pokemon(241, "Miltank", Pokemon::Type::Normal);
+   pokedex.remove_pokemon(113, "Chansey", Pokemon::Type::Normal);
    pokedex.add_pokemon(242, "Blissey", Pokemon::Type::Normal);
    if (include_legendaries) {
       pokedex.add_pokemon(243, "Raikou", Pokemon::Type::Electric);
