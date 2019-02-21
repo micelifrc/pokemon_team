@@ -9,7 +9,7 @@ int main() {
    // set the following parameters
    std::vector<Pokemon> fixed_pokemon{};
    std::vector<PokeTeam> best_teams;
-   int best_score = FindBestTeam(fixed_pokemon, best_teams, true, false, 1, 1, true)();
+   int best_score = FindBestTeam(fixed_pokemon, best_teams).find_best_teams();
 
    std::cout << "This is a list of the best teams:\n\n";
    for (const auto &team: best_teams) {

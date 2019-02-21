@@ -7,10 +7,11 @@
 FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
                            bool consider_defence_, bool consider_offence_, int filter_factor_,
                            unsigned last_generation_to_include_, bool include_starters_, bool include_ancients_,
-                           bool include_semilegendaries_, bool include_legendaries_)
+                           bool include_semilegendaries_, bool include_legendaries_, bool allow_type_repetitions_)
       :
       _num_fixed_pokemon{static_cast<unsigned>(fixed_pokemon_.size())}, _best_teams{best_teams_},
-      _max_score{std::numeric_limits<int>::min()}, _filter_factor{filter_factor_} {
+      _max_score{std::numeric_limits<int>::min()}, _filter_factor{filter_factor_},
+      _allow_type_repetitions{allow_type_repetitions_} {
    if (last_generation_to_include_ == 0) {
       throw std::invalid_argument("Should include pokemon of some generation");
    }
@@ -53,7 +54,7 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
    _pokedex.extract_representatives();
 }
 
-int FindBestTeam::operator()() {
+int FindBestTeam::find_best_teams() {
    find_best_team_loop_iter(_num_fixed_pokemon, 0);
    return _max_score;
 }
@@ -75,13 +76,25 @@ void FindBestTeam::find_best_team_loop_iter(unsigned already_in_team, unsigned l
       }
    } else {
       for (unsigned long poke_idx = next_to_try; poke_idx < _pokedex.representatives().size(); ++poke_idx) {
-         _current_team[already_in_team] = *_pokedex.representatives()[poke_idx];
-         for (unsigned int type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
-            int previous_scoring = (already_in_team == 0) ? 0 : _partial_scoring[already_in_team - 1][type_idx];
-            _partial_scoring[already_in_team][type_idx] =
-                  previous_scoring + _evaluation(&_current_team[already_in_team], static_cast<Pokemon::Type>(type_idx));
+         bool can_use_this_type_pair = true;
+         if (not _allow_type_repetitions) {
+            for (unsigned in_team_idx = 0; in_team_idx != already_in_team; ++in_team_idx) {
+               if (share_type(_current_team[in_team_idx], *_pokedex.representatives()[poke_idx])) {
+                  can_use_this_type_pair = false;
+                  break;
+               }
+            }
          }
-         find_best_team_loop_iter(already_in_team + 1, poke_idx);
+         if (can_use_this_type_pair) {
+            _current_team[already_in_team] = *_pokedex.representatives()[poke_idx];
+            for (unsigned int type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
+               int previous_scoring = (already_in_team == 0) ? 0 : _partial_scoring[already_in_team - 1][type_idx];
+               _partial_scoring[already_in_team][type_idx] = previous_scoring +
+                                                             _evaluation(&_current_team[already_in_team],
+                                                                         static_cast<Pokemon::Type>(type_idx));
+            }
+            find_best_team_loop_iter(already_in_team + 1, poke_idx);
+         }
       }
    }
 }

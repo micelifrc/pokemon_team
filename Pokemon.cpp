@@ -292,6 +292,12 @@ Pokemon::Effectiveness Pokemon::effectiveness(Pokemon::Type atk, Pokemon::Type d
    }
 }
 
+bool share_type(const Pokemon &lhs, const Pokemon &rhs) {
+   return lhs.types().first == rhs.types().first or lhs.types().first == rhs.types().second or
+          lhs.types().second == rhs.types().first or
+          (lhs.types().second == rhs.types().second and lhs.types().second != Pokemon::Type::Nothing);
+}
+
 bool operator<(const Pokemon &lhs, const Pokemon &rhs) {
    return lhs.id() < rhs.id();
 }

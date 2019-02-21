@@ -14,10 +14,10 @@ public:
                 bool consider_defence_ = true, bool consider_offence_ = false, int filter_factor_ = 1,
                 unsigned last_generation_to_include_ = 3, bool include_starters_ = false,
                 bool include_ancients_ = false, bool include_semilegendaries_ = false,
-                bool include_legendaries_ = false);
+                bool include_legendaries_ = false, bool allow_type_repetitions_ = true);
 
    // Will find the best possible team, for the first _num_fixed_pokemon already fixed in _current_team
-   int operator()();
+   int find_best_teams();
 
 private:
    // The main looping procedure for operator()
@@ -43,6 +43,7 @@ private:
    PokeTeam _current_team;  // the team we are currently testing
    std::array<std::array<int, Pokemon::NUM_TYPES>, 6> _partial_scoring;  // The partial scoring for the team
    Pokedex _pokedex;  // The pokedex where to search the other pokemon for the team
+   bool _allow_type_repetitions;
 };
 
 
