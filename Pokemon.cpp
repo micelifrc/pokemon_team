@@ -292,6 +292,30 @@ Pokemon::Effectiveness Pokemon::effectiveness(Pokemon::Type atk, Pokemon::Type d
    }
 }
 
+bool operator<(const Pokemon &lhs, const Pokemon &rhs) {
+   return lhs.id() < rhs.id();
+}
+
+bool operator>(const Pokemon &lhs, const Pokemon &rhs) {
+   return lhs.id() > rhs.id();
+}
+
+bool operator<=(const Pokemon &lhs, const Pokemon &rhs) {
+   return lhs.id() <= rhs.id();
+}
+
+bool operator>=(const Pokemon &lhs, const Pokemon &rhs) {
+   return lhs.id() >= rhs.id();
+}
+
+bool operator==(const Pokemon &lhs, const Pokemon &rhs) {
+   return lhs.id() == rhs.id();
+}
+
+bool operator!=(const Pokemon &lhs, const Pokemon &rhs) {
+   return lhs.id() != rhs.id();
+}
+
 std::ostream &operator<<(std::ostream &os, const Pokemon &poke) {
    return os << poke.name();
 }

@@ -43,8 +43,10 @@ public:
       Ineffective = -10
    };
 
-   explicit Pokemon(std::string name_ = "", Type type1 = Type::Nothing, Type type2 = Type::Nothing) :
-         _name{std::move(name_)}, _types{type1, type2} {}
+   explicit Pokemon(unsigned id_ = 0, std::string name_ = "", Type type1 = Type::Nothing, Type type2 = Type::Nothing) :
+         _id{id_}, _name{std::move(name_)}, _types{type1, type2} {}
+   explicit Pokemon(int id_, std::string name_ = "", Type type1 = Type::Nothing, Type type2 = Type::Nothing) :
+         _id{static_cast<unsigned>(id_)}, _name{std::move(name_)}, _types{type1, type2} {}
 
    // Positive if the pokemon has good resistance, negative if the pokemon has bad resistance
    int resistance(Type enemy_type) const;
@@ -55,6 +57,8 @@ public:
    // Positive if the pokemon has good mismatch, negative if the pokemon has bad mismatch
    int mismatch(Type enemy_type) const;
 
+   unsigned id() const { return _id; }
+
    const std::string &name() const { return _name; }
 
    const std::pair<Type, Type> &types() const { return _types; }
@@ -63,10 +67,17 @@ private:
    // tells if @p atk is effective against a pokemon of type @p def
    static Effectiveness effectiveness(Type atk, Type def);
 
+   unsigned _id;
    std::string _name;
    std::pair<Type, Type> _types;
 };
 
+bool operator<(const Pokemon &lhs, const Pokemon &rhs);
+bool operator>(const Pokemon &lhs, const Pokemon &rhs);
+bool operator<=(const Pokemon &lhs, const Pokemon &rhs);
+bool operator>=(const Pokemon &lhs, const Pokemon &rhs);
+bool operator==(const Pokemon &lhs, const Pokemon &rhs);
+bool operator!=(const Pokemon &lhs, const Pokemon &rhs);
 std::ostream &operator<<(std::ostream &os, const Pokemon &poke);
 
 // This class represents a subset of a pokedex of a certain region
@@ -80,7 +91,7 @@ public:
    inline const std::vector<std::pair<TypePair, std::vector<Index>>> &all_type_pairs() const;
 
    template<typename... Args>
-   void add_pokemon(Args... args);
+   void add_pokemon(Args... args);  // should also add a remove_pokemon(std::string) method
 
 private:
    // each pokemon of the pokedex appears as first, and its type is in _all_type_pairs[second].first

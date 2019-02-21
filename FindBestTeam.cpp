@@ -5,10 +5,18 @@
 #include "FindBestTeam.h"
 
 FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
-                           bool consider_defence_, bool consider_offence_, int filter_factor_, bool include_duplicates_)
+                           bool consider_defence_, bool consider_offence_, int filter_factor_,
+                           unsigned last_generation_to_include_, bool include_starters_, bool include_ancients_,
+                           bool include_semilegendaries_, bool include_legendaries_)
       :
       _num_fixed_pokemon{static_cast<unsigned>(fixed_pokemon_.size())}, _best_teams{best_teams_},
       _max_score{std::numeric_limits<int>::min()}, _filter_factor{filter_factor_} {
+   if (last_generation_to_include_ == 0) {
+      throw std::invalid_argument("Should include pokemon of some generation");
+   }
+   if (last_generation_to_include_ > 3) {
+      throw std::invalid_argument("Generations after gen.3 are not implemented yet");
+   }
    if (_num_fixed_pokemon > 6) {
       throw std::invalid_argument("Cannot complete at team that already has more than 6 pokemon");
    }
@@ -31,8 +39,16 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
          _partial_scoring[poke_idx][type_idx] = _evaluation(&_current_team[poke_idx], _all_types[type_idx]);
       }
    }
-   _duplicate_step = (include_duplicates_) ? 0 : 1;
-   add_kanto_pokedex(_pokedex);
+
+   if (last_generation_to_include_ >= 1) {
+      add_kanto_pokedex(_pokedex, include_starters_, include_ancients_, include_semilegendaries_, include_legendaries_);
+   }
+   if (last_generation_to_include_ >= 2) {
+      add_johto_pokedex(_pokedex, include_starters_, include_ancients_, include_semilegendaries_, include_legendaries_);
+   }
+   if (last_generation_to_include_ >= 3) {
+      add_hoenn_pokedex(_pokedex, include_starters_, include_ancients_, include_semilegendaries_, include_legendaries_);
+   }
 }
 
 int FindBestTeam::operator()() {
@@ -57,92 +73,275 @@ void FindBestTeam::find_best_team_loop_iter(unsigned already_in_team, unsigned l
       }
    } else {
       for (unsigned long poke_idx = next_to_try; poke_idx < _pokedex.all_type_pairs().size(); ++poke_idx) {
-         _current_team[already_in_team] = _pokedex.all_pokemon()[_pokedex.all_type_pairs()[poke_idx].second[0]].first;
+         _current_team[already_in_team] = _pokedex.all_pokemon()[_pokedex.all_type_pairs()[poke_idx].second.front()].first;
          for (unsigned int type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
             int previous_scoring = (already_in_team == 0) ? 0 : _partial_scoring[already_in_team - 1][type_idx];
             _partial_scoring[already_in_team][type_idx] =
                   previous_scoring + _evaluation(&_current_team[already_in_team], _all_types[type_idx]);
          }
-         find_best_team_loop_iter(already_in_team + 1, poke_idx + _duplicate_step);
+         find_best_team_loop_iter(already_in_team + 1, poke_idx);
       }
    }
 }
 
-void FindBestTeam::add_kanto_pokedex(Pokedex &pokedex) noexcept {
-   pokedex.add_pokemon("Venusaur", Pokemon::Type::Grass, Pokemon::Type::Poison);
-   pokedex.add_pokemon("Charizard", Pokemon::Type::Fire, Pokemon::Type::Flying);
-   pokedex.add_pokemon("Blastoise", Pokemon::Type::Water);
-   pokedex.add_pokemon("Butterfree", Pokemon::Type::Bug, Pokemon::Type::Flying);
-   pokedex.add_pokemon("Beedrill", Pokemon::Type::Bug, Pokemon::Type::Poison);
-   pokedex.add_pokemon("Beedrill", Pokemon::Type::Bug, Pokemon::Type::Poison);
-   pokedex.add_pokemon("Pidgeot", Pokemon::Type::Normal, Pokemon::Type::Flying);
-   pokedex.add_pokemon("Raticate", Pokemon::Type::Normal);
-   pokedex.add_pokemon("Fearow", Pokemon::Type::Normal, Pokemon::Type::Flying);
-   pokedex.add_pokemon("Arbok", Pokemon::Type::Poison);
-   pokedex.add_pokemon("Raichu", Pokemon::Type::Electric);
-   pokedex.add_pokemon("Sandlash", Pokemon::Type::Ground);
-   pokedex.add_pokemon("Nidoqueen", Pokemon::Type::Poison, Pokemon::Type::Ground);
-   pokedex.add_pokemon("Nidoking", Pokemon::Type::Poison, Pokemon::Type::Ground);
-   pokedex.add_pokemon("Clefable", Pokemon::Type::Fairy);
-   pokedex.add_pokemon("Ninetales", Pokemon::Type::Fire);
-   pokedex.add_pokemon("Wiglytuff", Pokemon::Type::Normal);
-   pokedex.add_pokemon("Golbat", Pokemon::Type::Poison, Pokemon::Type::Flying);
-   pokedex.add_pokemon("Vileplume", Pokemon::Type::Grass, Pokemon::Type::Poison);
-   pokedex.add_pokemon("Parasect", Pokemon::Type::Bug, Pokemon::Type::Grass);
-   pokedex.add_pokemon("Venomoth", Pokemon::Type::Bug, Pokemon::Type::Poison);
-   pokedex.add_pokemon("Dugtrio", Pokemon::Type::Ground);
-   pokedex.add_pokemon("Persian", Pokemon::Type::Normal);
-   pokedex.add_pokemon("Golduck", Pokemon::Type::Water);
-   pokedex.add_pokemon("Primeape", Pokemon::Type::Fighting);
-   pokedex.add_pokemon("Arcanine", Pokemon::Type::Fire);
-   pokedex.add_pokemon("Poliwrath", Pokemon::Type::Water, Pokemon::Type::Fighting);
-   pokedex.add_pokemon("Alakazam", Pokemon::Type::Psychic);
-   pokedex.add_pokemon("Machamp", Pokemon::Type::Fighting);
-   pokedex.add_pokemon("Victribel", Pokemon::Type::Grass, Pokemon::Type::Poison);
-   pokedex.add_pokemon("Tentacruel", Pokemon::Type::Water, Pokemon::Type::Poison);
-   pokedex.add_pokemon("Golem", Pokemon::Type::Rock, Pokemon::Type::Ground);
-   pokedex.add_pokemon("Rapidash", Pokemon::Type::Fire);
-   pokedex.add_pokemon("Slowbro", Pokemon::Type::Water, Pokemon::Type::Psychic);
-   pokedex.add_pokemon("Magneton", Pokemon::Type::Electric, Pokemon::Type::Steel);
-   pokedex.add_pokemon("Farfetch'd", Pokemon::Type::Normal, Pokemon::Type::Flying);
-   pokedex.add_pokemon("Dodrio", Pokemon::Type::Normal, Pokemon::Type::Flying);
-   pokedex.add_pokemon("Dwegong", Pokemon::Type::Water, Pokemon::Type::Ice);
-   pokedex.add_pokemon("Muk", Pokemon::Type::Poison);
-   pokedex.add_pokemon("Cloyster", Pokemon::Type::Water, Pokemon::Type::Ice);
-   pokedex.add_pokemon("Gengar", Pokemon::Type::Ghost, Pokemon::Type::Poison);
-   pokedex.add_pokemon("Onix", Pokemon::Type::Rock, Pokemon::Type::Ground);
-   pokedex.add_pokemon("Hypno", Pokemon::Type::Psychic);
-   pokedex.add_pokemon("Kingler", Pokemon::Type::Water);
-   pokedex.add_pokemon("Electrode", Pokemon::Type::Electric);
-   pokedex.add_pokemon("Exeggutor", Pokemon::Type::Grass, Pokemon::Type::Psychic);
-   pokedex.add_pokemon("Marowak", Pokemon::Type::Ground);
-   pokedex.add_pokemon("Hitmonlee", Pokemon::Type::Fighting);
-   pokedex.add_pokemon("Hitmonchan", Pokemon::Type::Fighting);
-   pokedex.add_pokemon("Lickitung", Pokemon::Type::Normal);
-   pokedex.add_pokemon("Weezing", Pokemon::Type::Poison);
-   pokedex.add_pokemon("Rhydon", Pokemon::Type::Ground, Pokemon::Type::Rock);
-   pokedex.add_pokemon("Chansey", Pokemon::Type::Normal);
-   pokedex.add_pokemon("Tangela", Pokemon::Type::Grass);
-   pokedex.add_pokemon("Kangaskhan", Pokemon::Type::Normal);
-   pokedex.add_pokemon("Seadra", Pokemon::Type::Water);
-   pokedex.add_pokemon("Seaking", Pokemon::Type::Water);
-   pokedex.add_pokemon("Starmie", Pokemon::Type::Water, Pokemon::Type::Psychic);
-   pokedex.add_pokemon("Mr.Mime", Pokemon::Type::Psychic, Pokemon::Type::Fairy);
-   pokedex.add_pokemon("Scyther", Pokemon::Type::Bug, Pokemon::Type::Flying);
-   pokedex.add_pokemon("Jynx", Pokemon::Type::Ice, Pokemon::Type::Psychic);
-   pokedex.add_pokemon("Electabuzz", Pokemon::Type::Electric);
-   pokedex.add_pokemon("Magmar", Pokemon::Type::Fire);
-   pokedex.add_pokemon("Pinsir", Pokemon::Type::Bug);
-   pokedex.add_pokemon("Tauros", Pokemon::Type::Normal);
-   pokedex.add_pokemon("Gyarados", Pokemon::Type::Water, Pokemon::Type::Flying);
-   pokedex.add_pokemon("Lapras", Pokemon::Type::Water, Pokemon::Type::Ice);
-   pokedex.add_pokemon("Ditto", Pokemon::Type::Normal);
-   pokedex.add_pokemon("Vaporeon", Pokemon::Type::Water);
-   pokedex.add_pokemon("Jolteon", Pokemon::Type::Electric);
-   pokedex.add_pokemon("Flareon", Pokemon::Type::Fire);
-   pokedex.add_pokemon("Porygon", Pokemon::Type::Normal);
-   pokedex.add_pokemon("Snorlax", Pokemon::Type::Normal);
+void FindBestTeam::add_kanto_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients,
+                                     bool include_semilegendaries, bool include_legendaries) noexcept {
+   if(include_starters) {
+      pokedex.add_pokemon(3, "Venusaur", Pokemon::Type::Grass, Pokemon::Type::Poison);
+      pokedex.add_pokemon(6, "Charizard", Pokemon::Type::Fire, Pokemon::Type::Flying);
+      pokedex.add_pokemon(9, "Blastoise", Pokemon::Type::Water);
+   }
+   pokedex.add_pokemon(12, "Butterfree", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(15, "Beedrill", Pokemon::Type::Bug, Pokemon::Type::Poison);
+   pokedex.add_pokemon(18, "Pidgeot", Pokemon::Type::Normal, Pokemon::Type::Flying);
+   pokedex.add_pokemon(20, "Raticate", Pokemon::Type::Normal);
+   pokedex.add_pokemon(22, "Fearow", Pokemon::Type::Normal, Pokemon::Type::Flying);
+   pokedex.add_pokemon(24, "Arbok", Pokemon::Type::Poison);
+   pokedex.add_pokemon(26, "Raichu", Pokemon::Type::Electric);
+   pokedex.add_pokemon(28, "Sandlash", Pokemon::Type::Ground);
+   pokedex.add_pokemon(31, "Nidoqueen", Pokemon::Type::Poison, Pokemon::Type::Ground);
+   pokedex.add_pokemon(34, "Nidoking", Pokemon::Type::Poison, Pokemon::Type::Ground);
+   pokedex.add_pokemon(36, "Clefable", Pokemon::Type::Fairy);
+   pokedex.add_pokemon(38, "Ninetales", Pokemon::Type::Fire);
+   pokedex.add_pokemon(40, "Wiglytuff", Pokemon::Type::Normal);
+   pokedex.add_pokemon(42, "Golbat", Pokemon::Type::Poison, Pokemon::Type::Flying);
+   pokedex.add_pokemon(45, "Vileplume", Pokemon::Type::Grass, Pokemon::Type::Poison);
+   pokedex.add_pokemon(47, "Parasect", Pokemon::Type::Bug, Pokemon::Type::Grass);
+   pokedex.add_pokemon(49, "Venomoth", Pokemon::Type::Bug, Pokemon::Type::Poison);
+   pokedex.add_pokemon(51, "Dugtrio", Pokemon::Type::Ground);
+   pokedex.add_pokemon(53, "Persian", Pokemon::Type::Normal);
+   pokedex.add_pokemon(55, "Golduck", Pokemon::Type::Water);
+   pokedex.add_pokemon(57, "Primeape", Pokemon::Type::Fighting);
+   pokedex.add_pokemon(59, "Arcanine", Pokemon::Type::Fire);
+   pokedex.add_pokemon(62, "Poliwrath", Pokemon::Type::Water, Pokemon::Type::Fighting);
+   pokedex.add_pokemon(65, "Alakazam", Pokemon::Type::Psychic);
+   pokedex.add_pokemon(68, "Machamp", Pokemon::Type::Fighting);
+   pokedex.add_pokemon(71, "Victribel", Pokemon::Type::Grass, Pokemon::Type::Poison);
+   pokedex.add_pokemon(73, "Tentacruel", Pokemon::Type::Water, Pokemon::Type::Poison);
+   pokedex.add_pokemon(76, "Golem", Pokemon::Type::Rock, Pokemon::Type::Ground);
+   pokedex.add_pokemon(78, "Rapidash", Pokemon::Type::Fire);
+   pokedex.add_pokemon(80, "Slowbro", Pokemon::Type::Water, Pokemon::Type::Psychic);
+   pokedex.add_pokemon(82, "Magneton", Pokemon::Type::Electric, Pokemon::Type::Steel);
+   pokedex.add_pokemon(83, "Farfetch'd", Pokemon::Type::Normal, Pokemon::Type::Flying);
+   pokedex.add_pokemon(85, "Dodrio", Pokemon::Type::Normal, Pokemon::Type::Flying);
+   pokedex.add_pokemon(87, "Dwegong", Pokemon::Type::Water, Pokemon::Type::Ice);
+   pokedex.add_pokemon(89, "Muk", Pokemon::Type::Poison);
+   pokedex.add_pokemon(91, "Cloyster", Pokemon::Type::Water, Pokemon::Type::Ice);
+   pokedex.add_pokemon(94, "Gengar", Pokemon::Type::Ghost, Pokemon::Type::Poison);
+   pokedex.add_pokemon(95, "Onix", Pokemon::Type::Rock, Pokemon::Type::Ground);
+   pokedex.add_pokemon(97, "Hypno", Pokemon::Type::Psychic);
+   pokedex.add_pokemon(99, "Kingler", Pokemon::Type::Water);
+   pokedex.add_pokemon(101, "Electrode", Pokemon::Type::Electric);
+   pokedex.add_pokemon(103, "Exeggutor", Pokemon::Type::Grass, Pokemon::Type::Psychic);
+   pokedex.add_pokemon(105, "Marowak", Pokemon::Type::Ground);
+   pokedex.add_pokemon(106, "Hitmonlee", Pokemon::Type::Fighting);
+   pokedex.add_pokemon(107, "Hitmonchan", Pokemon::Type::Fighting);
+   pokedex.add_pokemon(108, "Lickitung", Pokemon::Type::Normal);
+   pokedex.add_pokemon(110, "Weezing", Pokemon::Type::Poison);
+   pokedex.add_pokemon(112, "Rhydon", Pokemon::Type::Ground, Pokemon::Type::Rock);
+   pokedex.add_pokemon(113, "Chansey", Pokemon::Type::Normal);
+   pokedex.add_pokemon(114, "Tangela", Pokemon::Type::Grass);
+   pokedex.add_pokemon(115, "Kangaskhan", Pokemon::Type::Normal);
+   pokedex.add_pokemon(117, "Seadra", Pokemon::Type::Water);
+   pokedex.add_pokemon(119, "Seaking", Pokemon::Type::Water);
+   pokedex.add_pokemon(121, "Starmie", Pokemon::Type::Water, Pokemon::Type::Psychic);
+   pokedex.add_pokemon(122, "Mr.Mime", Pokemon::Type::Psychic, Pokemon::Type::Fairy);
+   pokedex.add_pokemon(123, "Scyther", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(124, "Jynx", Pokemon::Type::Ice, Pokemon::Type::Psychic);
+   pokedex.add_pokemon(125, "Electabuzz", Pokemon::Type::Electric);
+   pokedex.add_pokemon(126, "Magmar", Pokemon::Type::Fire);
+   pokedex.add_pokemon(127, "Pinsir", Pokemon::Type::Bug);
+   pokedex.add_pokemon(128, "Tauros", Pokemon::Type::Normal);
+   pokedex.add_pokemon(130, "Gyarados", Pokemon::Type::Water, Pokemon::Type::Flying);
+   pokedex.add_pokemon(131, "Lapras", Pokemon::Type::Water, Pokemon::Type::Ice);
+   pokedex.add_pokemon(132, "Ditto", Pokemon::Type::Normal);
+   pokedex.add_pokemon(134, "Vaporeon", Pokemon::Type::Water);
+   pokedex.add_pokemon(135, "Jolteon", Pokemon::Type::Electric);
+   pokedex.add_pokemon(136, "Flareon", Pokemon::Type::Fire);
+   pokedex.add_pokemon(137, "Porygon", Pokemon::Type::Normal);
+   if(include_ancients){
+      pokedex.add_pokemon(139, "Omastar", Pokemon::Type::Rock, Pokemon::Type::Water);
+      pokedex.add_pokemon(141, "Kabutops", Pokemon::Type::Rock, Pokemon::Type::Water);
+      pokedex.add_pokemon(142, "Aerodactyl", Pokemon::Type::Rock, Pokemon::Type::Flying);
+   }
+   pokedex.add_pokemon(143, "Snorlax", Pokemon::Type::Normal);
+   if(include_legendaries){
+      pokedex.add_pokemon(144, "Articuno", Pokemon::Type::Ice, Pokemon::Type::Flying);
+      pokedex.add_pokemon(145, "Zapdos", Pokemon::Type::Electric, Pokemon::Type::Flying);
+      pokedex.add_pokemon(146, "Moltres", Pokemon::Type::Fire, Pokemon::Type::Flying);
+   }
+   if(include_semilegendaries){
+      pokedex.add_pokemon(149, "Dragonite", Pokemon::Type::Dragon, Pokemon::Type::Flying);
+   }
+   if(include_legendaries) {
+      pokedex.add_pokemon(150, "MewTwo", Pokemon::Type::Psychic);
+      pokedex.add_pokemon(151, "Mew", Pokemon::Type::Psychic);
+   }
 }
+
+
+void FindBestTeam::add_johto_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients,
+                                     bool include_semilegendaries, bool include_legendaries) noexcept {
+   if(include_starters) {
+      pokedex.add_pokemon(154, "Meganium", Pokemon::Type::Grass);
+      pokedex.add_pokemon(157, "Typhlosion", Pokemon::Type::Fire);
+      pokedex.add_pokemon(160, "Feraligatr", Pokemon::Type::Water);
+   }
+   pokedex.add_pokemon(162, "Furret", Pokemon::Type::Normal);
+   pokedex.add_pokemon(164, "Noctowl", Pokemon::Type::Normal);
+   pokedex.add_pokemon(166, "Ledian", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(168, "Ariados", Pokemon::Type::Bug, Pokemon::Type::Poison);
+   pokedex.add_pokemon(169, "Crobat", Pokemon::Type::Poison, Pokemon::Type::Flying);
+   pokedex.add_pokemon(171, "Lanturn", Pokemon::Type::Water, Pokemon::Type::Electric);
+   pokedex.add_pokemon(176, "Togetic", Pokemon::Type::Fairy, Pokemon::Type::Flying);
+   pokedex.add_pokemon(178, "Xatu", Pokemon::Type::Psychic, Pokemon::Type::Flying);
+   pokedex.add_pokemon(181, "Ampharos", Pokemon::Type::Electric);
+   pokedex.add_pokemon(182, "Bellossom", Pokemon::Type::Grass);
+   pokedex.add_pokemon(184, "Azumarill", Pokemon::Type::Water, Pokemon::Type::Fairy);
+   pokedex.add_pokemon(185, "Sodowoodo", Pokemon::Type::Rock);
+   pokedex.add_pokemon(186, "Politoed", Pokemon::Type::Water);
+   pokedex.add_pokemon(189, "Jumpluff", Pokemon::Type::Grass, Pokemon::Type::Flying);
+   pokedex.add_pokemon(190, "Aipom", Pokemon::Type::Normal);
+   pokedex.add_pokemon(192, "Sunflora", Pokemon::Type::Grass);
+   pokedex.add_pokemon(193, "Yanma", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(195, "Quagsire", Pokemon::Type::Water, Pokemon::Type::Ground);
+   pokedex.add_pokemon(196, "Espeon", Pokemon::Type::Psychic);
+   pokedex.add_pokemon(197, "Umbreon", Pokemon::Type::Dark);
+   pokedex.add_pokemon(198, "Murkrow", Pokemon::Type::Dark, Pokemon::Type::Flying);
+   pokedex.add_pokemon(199, "Slowking", Pokemon::Type::Water, Pokemon::Type::Psychic);
+   pokedex.add_pokemon(200, "Misdreavus", Pokemon::Type::Ghost);
+   pokedex.add_pokemon(201, "Unown", Pokemon::Type::Psychic);
+   pokedex.add_pokemon(202, "Wobbuffet", Pokemon::Type::Psychic);
+   pokedex.add_pokemon(203, "Girafing", Pokemon::Type::Normal, Pokemon::Type::Psychic);
+   pokedex.add_pokemon(205, "Forrtress", Pokemon::Type::Bug, Pokemon::Type::Steel);
+   pokedex.add_pokemon(206, "Dunsparce", Pokemon::Type::Normal);
+   pokedex.add_pokemon(207, "Gligar", Pokemon::Type::Ground, Pokemon::Type::Flying);
+   pokedex.add_pokemon(208, "Steelix", Pokemon::Type::Steel, Pokemon::Type::Ground);
+   pokedex.add_pokemon(210, "Granbull", Pokemon::Type::Fairy);
+   pokedex.add_pokemon(211, "Qwilfish", Pokemon::Type::Water, Pokemon::Type::Poison);
+   pokedex.add_pokemon(212, "Scizor", Pokemon::Type::Bug, Pokemon::Type::Steel);
+   pokedex.add_pokemon(213, "Shuckle", Pokemon::Type::Bug, Pokemon::Type::Rock);
+   pokedex.add_pokemon(214, "Heracross", Pokemon::Type::Bug, Pokemon::Type::Fighting);
+   pokedex.add_pokemon(215, "Sneasel", Pokemon::Type::Dark, Pokemon::Type::Ice);
+   pokedex.add_pokemon(217, "Ursaring", Pokemon::Type::Normal);
+   pokedex.add_pokemon(219, "Magcargo", Pokemon::Type::Fire, Pokemon::Type::Rock);
+   pokedex.add_pokemon(221, "Piloswine", Pokemon::Type::Ice, Pokemon::Type::Ground);
+   pokedex.add_pokemon(222, "Corsola", Pokemon::Type::Water, Pokemon::Type::Rock);
+   pokedex.add_pokemon(224, "Octillery", Pokemon::Type::Water);
+   pokedex.add_pokemon(225, "Delibird", Pokemon::Type::Ice, Pokemon::Type::Flying);
+   pokedex.add_pokemon(226, "Mantine", Pokemon::Type::Water, Pokemon::Type::Flying);
+   pokedex.add_pokemon(227, "Skarmory", Pokemon::Type::Steel, Pokemon::Type::Flying);
+   pokedex.add_pokemon(229, "Houndoom", Pokemon::Type::Dark, Pokemon::Type::Fire);
+   pokedex.add_pokemon(230, "Kingdra", Pokemon::Type::Water, Pokemon::Type::Dragon);
+   pokedex.add_pokemon(232, "Donphan", Pokemon::Type::Ground);
+   pokedex.add_pokemon(233, "Porygon2", Pokemon::Type::Normal);
+   pokedex.add_pokemon(234, "Stantler", Pokemon::Type::Normal);
+   pokedex.add_pokemon(235, "Smeargle", Pokemon::Type::Normal);
+   pokedex.add_pokemon(237, "Hitmontop", Pokemon::Type::Fighting);
+   pokedex.add_pokemon(241, "Miltank", Pokemon::Type::Normal);
+   pokedex.add_pokemon(242, "Blissey", Pokemon::Type::Normal);
+   if(include_legendaries){
+      pokedex.add_pokemon(243, "Raikou", Pokemon::Type::Electric);
+      pokedex.add_pokemon(244, "Entei", Pokemon::Type::Fire);
+      pokedex.add_pokemon(245, "Suicune", Pokemon::Type::Water);
+   }
+   if(include_semilegendaries){
+      pokedex.add_pokemon(248, "Tyranitar", Pokemon::Type::Rock, Pokemon::Type::Dark);
+   }
+   if(include_legendaries){
+      pokedex.add_pokemon(249, "Lugia", Pokemon::Type::Psychic, Pokemon::Type::Flying);
+      pokedex.add_pokemon(250, "Ho-Oh", Pokemon::Type::Fire, Pokemon::Type::Flying);
+      pokedex.add_pokemon(251, "Celebi", Pokemon::Type::Psychic, Pokemon::Type::Grass);
+   }
+}
+
+void FindBestTeam::add_hoenn_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients,
+                                     bool include_semilegendaries, bool include_legendaries) noexcept {
+   if(include_starters) {
+      pokedex.add_pokemon(254, "Sceptile", Pokemon::Type::Grass);
+      pokedex.add_pokemon(257, "Blanziken", Pokemon::Type::Fire, Pokemon::Type::Fighting);
+      pokedex.add_pokemon(260, "Swampert", Pokemon::Type::Water, Pokemon::Type::Ground);
+   }
+   pokedex.add_pokemon(262, "Mightyena", Pokemon::Type::Dark);
+   pokedex.add_pokemon(264, "Linoone", Pokemon::Type::Normal);
+   pokedex.add_pokemon(267, "Beautifly", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(269, "Dustox", Pokemon::Type::Bug, Pokemon::Type::Poison);
+   pokedex.add_pokemon(272, "Ludicolo", Pokemon::Type::Water, Pokemon::Type::Grass);
+   pokedex.add_pokemon(275, "Shiftry", Pokemon::Type::Grass, Pokemon::Type::Dark);
+   pokedex.add_pokemon(277, "Swellow", Pokemon::Type::Normal, Pokemon::Type::Flying);
+   pokedex.add_pokemon(279, "Pelipper", Pokemon::Type::Water, Pokemon::Type::Flying);
+   pokedex.add_pokemon(282, "Gardevoir", Pokemon::Type::Psychic, Pokemon::Type::Fairy);
+   pokedex.add_pokemon(284, "Masquerain", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(286, "Breloom", Pokemon::Type::Grass, Pokemon::Type::Fighting);
+   pokedex.add_pokemon(289, "Slaking", Pokemon::Type::Normal);
+   pokedex.add_pokemon(291, "Ninjask", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(292, "Shedinja", Pokemon::Type::Bug, Pokemon::Type::Ghost);
+   pokedex.add_pokemon(295, "Exploud", Pokemon::Type::Normal);
+   pokedex.add_pokemon(297, "Hariyama", Pokemon::Type::Fighting);
+   pokedex.add_pokemon(299, "Nosepass", Pokemon::Type::Rock);
+   pokedex.add_pokemon(301, "Delcatty", Pokemon::Type::Normal);
+   pokedex.add_pokemon(302, "Sableye", Pokemon::Type::Dark, Pokemon::Type::Ghost);
+   pokedex.add_pokemon(303, "Mawile", Pokemon::Type::Steel, Pokemon::Type::Fairy);
+   pokedex.add_pokemon(306, "Aggron", Pokemon::Type::Steel, Pokemon::Type::Rock);
+   pokedex.add_pokemon(308, "Medicham", Pokemon::Type::Fighting, Pokemon::Type::Psychic);
+   pokedex.add_pokemon(310, "Manectric", Pokemon::Type::Electric);
+   pokedex.add_pokemon(311, "Pluse", Pokemon::Type::Electric);
+   pokedex.add_pokemon(312, "Minun", Pokemon::Type::Electric);
+   pokedex.add_pokemon(314, "Volbeat", Pokemon::Type::Bug);
+   pokedex.add_pokemon(315, "Roselia", Pokemon::Type::Grass, Pokemon::Type::Poison);
+   pokedex.add_pokemon(317, "Swalot", Pokemon::Type::Poison);
+   pokedex.add_pokemon(319, "Sharpedo", Pokemon::Type::Water, Pokemon::Type::Dark);
+   pokedex.add_pokemon(321, "Wailord", Pokemon::Type::Water);
+   pokedex.add_pokemon(323, "Camerupt", Pokemon::Type::Fire, Pokemon::Type::Ground);
+   pokedex.add_pokemon(324, "Torkoal", Pokemon::Type::Fire);
+   pokedex.add_pokemon(326, "Grumping", Pokemon::Type::Psychic);
+   pokedex.add_pokemon(327, "Spinda", Pokemon::Type::Normal);
+   pokedex.add_pokemon(330, "Flygon", Pokemon::Type::Ground, Pokemon::Type::Dragon);
+   pokedex.add_pokemon(332, "Cacturne", Pokemon::Type::Grass, Pokemon::Type::Dark);
+   pokedex.add_pokemon(334, "Altaria", Pokemon::Type::Dragon, Pokemon::Type::Flying);
+   pokedex.add_pokemon(335, "Zangoose", Pokemon::Type::Normal);
+   pokedex.add_pokemon(336, "Seviper", Pokemon::Type::Poison);
+   pokedex.add_pokemon(337, "Lunatone", Pokemon::Type::Rock, Pokemon::Type::Psychic);
+   pokedex.add_pokemon(338, "Solrock", Pokemon::Type::Rock, Pokemon::Type::Psychic);
+   pokedex.add_pokemon(340, "Whiscash", Pokemon::Type::Water, Pokemon::Type::Ground);
+   pokedex.add_pokemon(342, "Crawdaunt", Pokemon::Type::Water, Pokemon::Type::Dark);
+   pokedex.add_pokemon(344, "Claydol", Pokemon::Type::Ground, Pokemon::Type::Psychic);
+   if(include_ancients){
+      pokedex.add_pokemon(346, "Cradily", Pokemon::Type::Rock, Pokemon::Type::Grass);
+      pokedex.add_pokemon(348, "Armaldo", Pokemon::Type::Rock, Pokemon::Type::Bug);
+   }
+   pokedex.add_pokemon(350, "Milotic", Pokemon::Type::Water);
+   pokedex.add_pokemon(351, "Castform", Pokemon::Type::Normal);
+   pokedex.add_pokemon(352, "Keckleon", Pokemon::Type::Normal);
+   pokedex.add_pokemon(354, "Banette", Pokemon::Type::Ghost);
+   pokedex.add_pokemon(356, "Dusclops", Pokemon::Type::Ghost);
+   pokedex.add_pokemon(357, "Tropius", Pokemon::Type::Grass, Pokemon::Type::Flying);
+   pokedex.add_pokemon(358, "Chimecho", Pokemon::Type::Psychic);
+   pokedex.add_pokemon(359, "Absol", Pokemon::Type::Dark);
+   pokedex.add_pokemon(360, "Wynaut", Pokemon::Type::Psychic);
+   pokedex.add_pokemon(362, "Glalie", Pokemon::Type::Ice);
+   pokedex.add_pokemon(365, "Walrein", Pokemon::Type::Ice, Pokemon::Type::Water);
+   pokedex.add_pokemon(368, "Gorebyss", Pokemon::Type::Water);
+   pokedex.add_pokemon(369, "Relicanth", Pokemon::Type::Water, Pokemon::Type::Rock);
+   pokedex.add_pokemon(370, "Luvdisc", Pokemon::Type::Water);
+   if(include_semilegendaries){
+      pokedex.add_pokemon(373, "Salamence", Pokemon::Type::Dragon, Pokemon::Type::Flying);
+      pokedex.add_pokemon(376, "Metagross", Pokemon::Type::Steel, Pokemon::Type::Psychic);
+   }
+   if(include_legendaries){
+      pokedex.add_pokemon(377, "Regirock", Pokemon::Type::Rock);
+      pokedex.add_pokemon(378, "Regice", Pokemon::Type::Ice);
+      pokedex.add_pokemon(379, "Registeel", Pokemon::Type::Steel);
+      pokedex.add_pokemon(380, "Latias", Pokemon::Type::Dragon, Pokemon::Type::Psychic);
+      pokedex.add_pokemon(381, "Latios", Pokemon::Type::Dragon, Pokemon::Type::Psychic);
+      pokedex.add_pokemon(382, "Kyogre", Pokemon::Type::Water);
+      pokedex.add_pokemon(383, "Groudon", Pokemon::Type::Ground);
+      pokedex.add_pokemon(384, "Rayquaza", Pokemon::Type::Dragon, Pokemon::Type::Flying);
+      pokedex.add_pokemon(385, "Jirachi", Pokemon::Type::Steel, Pokemon::Type::Psychic);
+      pokedex.add_pokemon(386, "Deoxys", Pokemon::Type::Psychic);
+   }
+}
+
 
 const std::array<Pokemon::Type, Pokemon::NUM_TYPES> FindBestTeam::_all_types{Pokemon::Type::Normal,
                                                                              Pokemon::Type::Fighting,
