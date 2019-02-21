@@ -34,7 +34,6 @@ private:
    add_hoenn_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients, bool include_semilegendaries,
                      bool include_legendaries) noexcept;
 
-   static const std::array<Pokemon::Type, Pokemon::NUM_TYPES> _all_types;  // An array containing all the types
    unsigned _num_fixed_pokemon;  // the number of pokemon we specify from constructor
    std::vector<PokeTeam> &_best_teams;  // the list of all best teams found
    int _max_score;  // the max score found in the computation

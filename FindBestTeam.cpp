@@ -36,7 +36,8 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
    for (unsigned poke_idx = 0; poke_idx != _num_fixed_pokemon; ++poke_idx) {
       _current_team[poke_idx] = fixed_pokemon_[poke_idx];
       for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
-         _partial_scoring[poke_idx][type_idx] = _evaluation(&_current_team[poke_idx], _all_types[type_idx]);
+         _partial_scoring[poke_idx][type_idx] = _evaluation(&_current_team[poke_idx],
+                                                            static_cast<Pokemon::Type>(type_idx));
       }
    }
 
@@ -77,7 +78,7 @@ void FindBestTeam::find_best_team_loop_iter(unsigned already_in_team, unsigned l
          for (unsigned int type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
             int previous_scoring = (already_in_team == 0) ? 0 : _partial_scoring[already_in_team - 1][type_idx];
             _partial_scoring[already_in_team][type_idx] =
-                  previous_scoring + _evaluation(&_current_team[already_in_team], _all_types[type_idx]);
+                  previous_scoring + _evaluation(&_current_team[already_in_team], static_cast<Pokemon::Type>(type_idx));
          }
          find_best_team_loop_iter(already_in_team + 1, poke_idx);
       }
@@ -86,7 +87,7 @@ void FindBestTeam::find_best_team_loop_iter(unsigned already_in_team, unsigned l
 
 void FindBestTeam::add_kanto_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients,
                                      bool include_semilegendaries, bool include_legendaries) noexcept {
-   if(include_starters) {
+   if (include_starters) {
       pokedex.add_pokemon(3, "Venusaur", Pokemon::Type::Grass, Pokemon::Type::Poison);
       pokedex.add_pokemon(6, "Charizard", Pokemon::Type::Fire, Pokemon::Type::Flying);
       pokedex.add_pokemon(9, "Blastoise", Pokemon::Type::Water);
@@ -159,21 +160,21 @@ void FindBestTeam::add_kanto_pokedex(Pokedex &pokedex, bool include_starters, bo
    pokedex.add_pokemon(135, "Jolteon", Pokemon::Type::Electric);
    pokedex.add_pokemon(136, "Flareon", Pokemon::Type::Fire);
    pokedex.add_pokemon(137, "Porygon", Pokemon::Type::Normal);
-   if(include_ancients){
+   if (include_ancients) {
       pokedex.add_pokemon(139, "Omastar", Pokemon::Type::Rock, Pokemon::Type::Water);
       pokedex.add_pokemon(141, "Kabutops", Pokemon::Type::Rock, Pokemon::Type::Water);
       pokedex.add_pokemon(142, "Aerodactyl", Pokemon::Type::Rock, Pokemon::Type::Flying);
    }
    pokedex.add_pokemon(143, "Snorlax", Pokemon::Type::Normal);
-   if(include_legendaries){
+   if (include_legendaries) {
       pokedex.add_pokemon(144, "Articuno", Pokemon::Type::Ice, Pokemon::Type::Flying);
       pokedex.add_pokemon(145, "Zapdos", Pokemon::Type::Electric, Pokemon::Type::Flying);
       pokedex.add_pokemon(146, "Moltres", Pokemon::Type::Fire, Pokemon::Type::Flying);
    }
-   if(include_semilegendaries){
+   if (include_semilegendaries) {
       pokedex.add_pokemon(149, "Dragonite", Pokemon::Type::Dragon, Pokemon::Type::Flying);
    }
-   if(include_legendaries) {
+   if (include_legendaries) {
       pokedex.add_pokemon(150, "MewTwo", Pokemon::Type::Psychic);
       pokedex.add_pokemon(151, "Mew", Pokemon::Type::Psychic);
    }
@@ -182,7 +183,7 @@ void FindBestTeam::add_kanto_pokedex(Pokedex &pokedex, bool include_starters, bo
 
 void FindBestTeam::add_johto_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients,
                                      bool include_semilegendaries, bool include_legendaries) noexcept {
-   if(include_starters) {
+   if (include_starters) {
       pokedex.add_pokemon(154, "Meganium", Pokemon::Type::Grass);
       pokedex.add_pokemon(157, "Typhlosion", Pokemon::Type::Fire);
       pokedex.add_pokemon(160, "Feraligatr", Pokemon::Type::Water);
@@ -240,15 +241,15 @@ void FindBestTeam::add_johto_pokedex(Pokedex &pokedex, bool include_starters, bo
    pokedex.add_pokemon(237, "Hitmontop", Pokemon::Type::Fighting);
    pokedex.add_pokemon(241, "Miltank", Pokemon::Type::Normal);
    pokedex.add_pokemon(242, "Blissey", Pokemon::Type::Normal);
-   if(include_legendaries){
+   if (include_legendaries) {
       pokedex.add_pokemon(243, "Raikou", Pokemon::Type::Electric);
       pokedex.add_pokemon(244, "Entei", Pokemon::Type::Fire);
       pokedex.add_pokemon(245, "Suicune", Pokemon::Type::Water);
    }
-   if(include_semilegendaries){
+   if (include_semilegendaries) {
       pokedex.add_pokemon(248, "Tyranitar", Pokemon::Type::Rock, Pokemon::Type::Dark);
    }
-   if(include_legendaries){
+   if (include_legendaries) {
       pokedex.add_pokemon(249, "Lugia", Pokemon::Type::Psychic, Pokemon::Type::Flying);
       pokedex.add_pokemon(250, "Ho-Oh", Pokemon::Type::Fire, Pokemon::Type::Flying);
       pokedex.add_pokemon(251, "Celebi", Pokemon::Type::Psychic, Pokemon::Type::Grass);
@@ -257,7 +258,7 @@ void FindBestTeam::add_johto_pokedex(Pokedex &pokedex, bool include_starters, bo
 
 void FindBestTeam::add_hoenn_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients,
                                      bool include_semilegendaries, bool include_legendaries) noexcept {
-   if(include_starters) {
+   if (include_starters) {
       pokedex.add_pokemon(254, "Sceptile", Pokemon::Type::Grass);
       pokedex.add_pokemon(257, "Blanziken", Pokemon::Type::Fire, Pokemon::Type::Fighting);
       pokedex.add_pokemon(260, "Swampert", Pokemon::Type::Water, Pokemon::Type::Ground);
@@ -306,7 +307,7 @@ void FindBestTeam::add_hoenn_pokedex(Pokedex &pokedex, bool include_starters, bo
    pokedex.add_pokemon(340, "Whiscash", Pokemon::Type::Water, Pokemon::Type::Ground);
    pokedex.add_pokemon(342, "Crawdaunt", Pokemon::Type::Water, Pokemon::Type::Dark);
    pokedex.add_pokemon(344, "Claydol", Pokemon::Type::Ground, Pokemon::Type::Psychic);
-   if(include_ancients){
+   if (include_ancients) {
       pokedex.add_pokemon(346, "Cradily", Pokemon::Type::Rock, Pokemon::Type::Grass);
       pokedex.add_pokemon(348, "Armaldo", Pokemon::Type::Rock, Pokemon::Type::Bug);
    }
@@ -324,11 +325,11 @@ void FindBestTeam::add_hoenn_pokedex(Pokedex &pokedex, bool include_starters, bo
    pokedex.add_pokemon(368, "Gorebyss", Pokemon::Type::Water);
    pokedex.add_pokemon(369, "Relicanth", Pokemon::Type::Water, Pokemon::Type::Rock);
    pokedex.add_pokemon(370, "Luvdisc", Pokemon::Type::Water);
-   if(include_semilegendaries){
+   if (include_semilegendaries) {
       pokedex.add_pokemon(373, "Salamence", Pokemon::Type::Dragon, Pokemon::Type::Flying);
       pokedex.add_pokemon(376, "Metagross", Pokemon::Type::Steel, Pokemon::Type::Psychic);
    }
-   if(include_legendaries){
+   if (include_legendaries) {
       pokedex.add_pokemon(377, "Regirock", Pokemon::Type::Rock);
       pokedex.add_pokemon(378, "Regice", Pokemon::Type::Ice);
       pokedex.add_pokemon(379, "Registeel", Pokemon::Type::Steel);
@@ -341,17 +342,3 @@ void FindBestTeam::add_hoenn_pokedex(Pokedex &pokedex, bool include_starters, bo
       pokedex.add_pokemon(386, "Deoxys", Pokemon::Type::Psychic);
    }
 }
-
-
-const std::array<Pokemon::Type, Pokemon::NUM_TYPES> FindBestTeam::_all_types{Pokemon::Type::Normal,
-                                                                             Pokemon::Type::Fighting,
-                                                                             Pokemon::Type::Flying,
-                                                                             Pokemon::Type::Poison,
-                                                                             Pokemon::Type::Ground, Pokemon::Type::Rock,
-                                                                             Pokemon::Type::Bug, Pokemon::Type::Ghost,
-                                                                             Pokemon::Type::Steel, Pokemon::Type::Fire,
-                                                                             Pokemon::Type::Water, Pokemon::Type::Grass,
-                                                                             Pokemon::Type::Electric,
-                                                                             Pokemon::Type::Psychic, Pokemon::Type::Ice,
-                                                                             Pokemon::Type::Dragon, Pokemon::Type::Dark,
-                                                                             Pokemon::Type::Fairy};
