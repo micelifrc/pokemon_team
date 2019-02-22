@@ -9,7 +9,7 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
                            bool consider_offence_, int filter_factor_, bool allow_type_repetitions_) :
       _num_fixed_pokemon{static_cast<unsigned>(fixed_pokemon_.size())}, _best_teams{best_teams_},
       _max_score{std::numeric_limits<int>::min()}, _filter_factor{filter_factor_},
-      _allow_type_repetitions{allow_type_repetitions_} {
+      _allow_type_repetitions{allow_type_repetitions_}, _max_possible_increment{0} {
    if (_num_fixed_pokemon > 6) {
       throw std::invalid_argument("Cannot complete at team that already has more than 6 pokemon");
    }
@@ -30,10 +30,11 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
       _current_team[poke_idx] = fixed_pokemon_[poke_idx];
       for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
          _partial_scoring[poke_idx][type_idx] = _evaluation(&_current_team[poke_idx],
-                                                            static_cast<Pokemon::Type>(type_idx));
+                                                            static_cast<PokeType>(type_idx));
       }
    }
    _pokedex.make(regions_, inclusions_);
+   set_max_possible_increment();
 }
 
 int FindBestTeam::find_best_teams() {
@@ -41,15 +42,37 @@ int FindBestTeam::find_best_teams() {
    return _max_score;
 }
 
+
+void FindBestTeam::set_max_possible_increment() {
+   for (const auto &repr: _pokedex.representatives()) {
+      int max_increment_for_fixed_pokemon = 0;
+      for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
+         max_increment_for_fixed_pokemon += std::max(0, _evaluation(repr, static_cast<PokeType>(type_idx)));
+      }
+      _max_possible_increment = std::max(_max_possible_increment, max_increment_for_fixed_pokemon);
+   }
+}
+
+int FindBestTeam::compute_scoring(unsigned idx) {
+   if (idx == 0) {
+      return 0;
+   }
+   if (idx > 6) {
+      throw std::logic_error("Cannot compute FindBestTeam::compute_scoring for index > 6");
+   }
+   unsigned scoring = 0;
+   for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
+      scoring += std::min(_filter_factor, _partial_scoring[idx - 1][type_idx]);
+   }
+   return scoring;
+}
+
 void FindBestTeam::find_best_team_loop_iter(unsigned already_in_team, unsigned long next_to_try) {
    if (already_in_team > 6) {
       throw std::logic_error("The team already have too many pokemon");
    }
    if (already_in_team == 6) {
-      int current_score = 0;
-      for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
-         current_score += std::min(_filter_factor, _partial_scoring[5][type_idx]);
-      }
+      int current_score = compute_scoring(6);
       if (current_score == _max_score) {
          _best_teams.emplace_back(_current_team);
       } else if (current_score > _max_score) {
@@ -73,9 +96,12 @@ void FindBestTeam::find_best_team_loop_iter(unsigned already_in_team, unsigned l
                int previous_scoring = (already_in_team == 0) ? 0 : _partial_scoring[already_in_team - 1][type_idx];
                _partial_scoring[already_in_team][type_idx] = previous_scoring +
                                                              _evaluation(&_current_team[already_in_team],
-                                                                         static_cast<Pokemon::Type>(type_idx));
+                                                                         static_cast<PokeType>(type_idx));
             }
-            find_best_team_loop_iter(already_in_team + 1, poke_idx);
+            if (compute_scoring(already_in_team + 1) +
+                static_cast<int>(5 - already_in_team) * _max_possible_increment >= _max_score) {
+               find_best_team_loop_iter(already_in_team + 1, poke_idx);
+            }
          }
       }
    }

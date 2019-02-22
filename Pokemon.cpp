@@ -4,284 +4,284 @@
 
 #include "Pokemon.h"
 
-int Pokemon::resistance(Pokemon::Type enemy_type) const {
+int Pokemon::resistance(PokeType enemy_type) const {
    return std::min(2, -static_cast<int>(effectiveness(enemy_type, _types.first)) -
                       static_cast<int>(effectiveness(enemy_type, _types.second)));
 }
 
-int Pokemon::offensive_effectiveness(Pokemon::Type enemy_type) const {
+int Pokemon::offensive_effectiveness(PokeType enemy_type) const {
    return std::max(-1, static_cast<int>(std::max(effectiveness(_types.first, enemy_type),
                                                  effectiveness(_types.second, enemy_type))));
 }
 
-int Pokemon::mismatch(Pokemon::Type enemy_type) const {
+int Pokemon::mismatch(PokeType enemy_type) const {
    return resistance(enemy_type) + offensive_effectiveness(enemy_type);
 }
 
-Pokemon::Effectiveness Pokemon::effectiveness(Pokemon::Type atk, Pokemon::Type def) {
+Pokemon::Effectiveness Pokemon::effectiveness(PokeType atk, PokeType def) {
    switch (def) {
-      case Type::Normal: {
+      case PokeType::Normal: {
          switch (atk) {
-            case Type::Fighting:
+            case PokeType::Fighting:
                return Effectiveness::Supereffective;
-            case Type::Ghost:
+            case PokeType::Ghost:
                return Effectiveness::Ineffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Fighting: {
+      case PokeType::Fighting: {
          switch (atk) {
-            case Type::Flying:
-            case Type::Psychic:
-            case Type::Fairy:
+            case PokeType::Flying:
+            case PokeType::Psychic:
+            case PokeType::Fairy:
                return Effectiveness::Supereffective;
-            case Type::Rock:
-            case Type::Bug:
-            case Type::Dark:
+            case PokeType::Rock:
+            case PokeType::Bug:
+            case PokeType::Dark:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Flying: {
+      case PokeType::Flying: {
          switch (atk) {
-            case Type::Rock:
-            case Type::Electric:
-            case Type::Ice:
+            case PokeType::Rock:
+            case PokeType::Electric:
+            case PokeType::Ice:
                return Effectiveness::Supereffective;
-            case Type::Fighting:
-            case Type::Bug:
-            case Type::Grass:
+            case PokeType::Fighting:
+            case PokeType::Bug:
+            case PokeType::Grass:
                return Effectiveness::NonVeryEffective;
-            case Type::Ground:
+            case PokeType::Ground:
                return Effectiveness::Ineffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Poison: {
+      case PokeType::Poison: {
          switch (atk) {
-            case Type::Ground:
-            case Type::Psychic:
+            case PokeType::Ground:
+            case PokeType::Psychic:
                return Effectiveness::Supereffective;
-            case Type::Fighting:
-            case Type::Poison:
-            case Type::Bug:
-            case Type::Grass:
-            case Type::Fairy:
+            case PokeType::Fighting:
+            case PokeType::Poison:
+            case PokeType::Bug:
+            case PokeType::Grass:
+            case PokeType::Fairy:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Ground: {
+      case PokeType::Ground: {
          switch (atk) {
-            case Type::Water:
-            case Type::Grass:
-            case Type::Ice:
+            case PokeType::Water:
+            case PokeType::Grass:
+            case PokeType::Ice:
                return Effectiveness::Supereffective;
-            case Type::Poison:
-            case Type::Rock:
+            case PokeType::Poison:
+            case PokeType::Rock:
                return Effectiveness::NonVeryEffective;
-            case Type::Electric:
+            case PokeType::Electric:
                return Effectiveness::Ineffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Rock: {
+      case PokeType::Rock: {
          switch (atk) {
-            case Type::Fighting:
-            case Type::Ground:
-            case Type::Steel:
-            case Type::Water:
-            case Type::Grass:
+            case PokeType::Fighting:
+            case PokeType::Ground:
+            case PokeType::Steel:
+            case PokeType::Water:
+            case PokeType::Grass:
                return Effectiveness::Supereffective;
-            case Type::Normal:
-            case Type::Flying:
-            case Type::Poison:
-            case Type::Fire:
+            case PokeType::Normal:
+            case PokeType::Flying:
+            case PokeType::Poison:
+            case PokeType::Fire:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Bug: {
+      case PokeType::Bug: {
          switch (atk) {
-            case Type::Flying:
-            case Type::Rock:
-            case Type::Fire:
+            case PokeType::Flying:
+            case PokeType::Rock:
+            case PokeType::Fire:
                return Effectiveness::Supereffective;
-            case Type::Fighting:
-            case Type::Ground:
-            case Type::Grass:
+            case PokeType::Fighting:
+            case PokeType::Ground:
+            case PokeType::Grass:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Ghost: {
+      case PokeType::Ghost: {
          switch (atk) {
-            case Type::Ghost:
-            case Type::Dark:
+            case PokeType::Ghost:
+            case PokeType::Dark:
                return Effectiveness::Supereffective;
-            case Type::Poison:
-            case Type::Bug:
+            case PokeType::Poison:
+            case PokeType::Bug:
                return Effectiveness::NonVeryEffective;
-            case Type::Normal:
-            case Type::Fighting:
+            case PokeType::Normal:
+            case PokeType::Fighting:
                return Effectiveness::Ineffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Steel: {
+      case PokeType::Steel: {
          switch (atk) {
-            case Type::Fighting:
-            case Type::Ground:
-            case Type::Fire:
+            case PokeType::Fighting:
+            case PokeType::Ground:
+            case PokeType::Fire:
                return Effectiveness::Supereffective;
-            case Type::Normal:
-            case Type::Flying:
-            case Type::Rock:
-            case Type::Bug:
-            case Type::Steel:
-            case Type::Grass:
-            case Type::Psychic:
-            case Type::Ice:
-            case Type::Dragon:
-            case Type::Fairy:
+            case PokeType::Normal:
+            case PokeType::Flying:
+            case PokeType::Rock:
+            case PokeType::Bug:
+            case PokeType::Steel:
+            case PokeType::Grass:
+            case PokeType::Psychic:
+            case PokeType::Ice:
+            case PokeType::Dragon:
+            case PokeType::Fairy:
                return Effectiveness::NonVeryEffective;
-            case Type::Poison:
+            case PokeType::Poison:
                return Effectiveness::Ineffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Fire: {
+      case PokeType::Fire: {
          switch (atk) {
-            case Type::Ground:
-            case Type::Rock:
-            case Type::Water:
+            case PokeType::Ground:
+            case PokeType::Rock:
+            case PokeType::Water:
                return Effectiveness::Supereffective;
-            case Type::Bug:
-            case Type::Steel:
-            case Type::Fire:
-            case Type::Grass:
-            case Type::Ice:
-            case Type::Fairy:
+            case PokeType::Bug:
+            case PokeType::Steel:
+            case PokeType::Fire:
+            case PokeType::Grass:
+            case PokeType::Ice:
+            case PokeType::Fairy:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Water: {
+      case PokeType::Water: {
          switch (atk) {
-            case Type::Grass:
-            case Type::Electric:
+            case PokeType::Grass:
+            case PokeType::Electric:
                return Effectiveness::Supereffective;
-            case Type::Steel:
-            case Type::Fire:
-            case Type::Water:
+            case PokeType::Steel:
+            case PokeType::Fire:
+            case PokeType::Water:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Grass: {
+      case PokeType::Grass: {
          switch (atk) {
-            case Type::Flying:
-            case Type::Poison:
-            case Type::Bug:
-            case Type::Fire:
-            case Type::Ice:
+            case PokeType::Flying:
+            case PokeType::Poison:
+            case PokeType::Bug:
+            case PokeType::Fire:
+            case PokeType::Ice:
                return Effectiveness::Supereffective;
-            case Type::Ground:
-            case Type::Water:
-            case Type::Grass:
-            case Type::Electric:
+            case PokeType::Ground:
+            case PokeType::Water:
+            case PokeType::Grass:
+            case PokeType::Electric:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Electric: {
+      case PokeType::Electric: {
          switch (atk) {
-            case Type::Ground:
+            case PokeType::Ground:
                return Effectiveness::Supereffective;
-            case Type::Flying:
-            case Type::Steel:
-            case Type::Electric:
+            case PokeType::Flying:
+            case PokeType::Steel:
+            case PokeType::Electric:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Psychic: {
+      case PokeType::Psychic: {
          switch (atk) {
-            case Type::Bug:
-            case Type::Ghost:
-            case Type::Dark:
+            case PokeType::Bug:
+            case PokeType::Ghost:
+            case PokeType::Dark:
                return Effectiveness::Supereffective;
-            case Type::Fighting:
-            case Type::Psychic:
+            case PokeType::Fighting:
+            case PokeType::Psychic:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Ice: {
+      case PokeType::Ice: {
          switch (atk) {
-            case Type::Fighting:
-            case Type::Rock:
-            case Type::Steel:
-            case Type::Fire:
+            case PokeType::Fighting:
+            case PokeType::Rock:
+            case PokeType::Steel:
+            case PokeType::Fire:
                return Effectiveness::Supereffective;
-            case Type::Ice:
+            case PokeType::Ice:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Dragon: {
+      case PokeType::Dragon: {
          switch (atk) {
-            case Type::Ice:
-            case Type::Dragon:
-            case Type::Fairy:
+            case PokeType::Ice:
+            case PokeType::Dragon:
+            case PokeType::Fairy:
                return Effectiveness::Supereffective;
-            case Type::Fire:
-            case Type::Water:
-            case Type::Grass:
-            case Type::Electric:
+            case PokeType::Fire:
+            case PokeType::Water:
+            case PokeType::Grass:
+            case PokeType::Electric:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Dark: {
+      case PokeType::Dark: {
          switch (atk) {
-            case Type::Fighting:
-            case Type::Bug:
-            case Type::Fairy:
+            case PokeType::Fighting:
+            case PokeType::Bug:
+            case PokeType::Fairy:
                return Effectiveness::Supereffective;
-            case Type::Ghost:
-            case Type::Dark:
+            case PokeType::Ghost:
+            case PokeType::Dark:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
          }
       }
-      case Type::Fairy: {
+      case PokeType::Fairy: {
          switch (atk) {
-            case Type::Poison:
-            case Type::Steel:
+            case PokeType::Poison:
+            case PokeType::Steel:
                return Effectiveness::Supereffective;
-            case Type::Fighting:
-            case Type::Bug:
-            case Type::Dark:
+            case PokeType::Fighting:
+            case PokeType::Bug:
+            case PokeType::Dark:
                return Effectiveness::NonVeryEffective;
-            case Type::Dragon:
+            case PokeType::Dragon:
                return Effectiveness::Ineffective;
             default:
                return Effectiveness::Effective;
@@ -295,7 +295,7 @@ Pokemon::Effectiveness Pokemon::effectiveness(Pokemon::Type atk, Pokemon::Type d
 bool share_type(const Pokemon &lhs, const Pokemon &rhs) {
    return lhs.types().first == rhs.types().first or lhs.types().first == rhs.types().second or
           lhs.types().second == rhs.types().first or
-          (lhs.types().second == rhs.types().second and lhs.types().second != Pokemon::Type::Nothing);
+          (lhs.types().second == rhs.types().second and lhs.types().second != PokeType::Nothing);
 }
 
 bool operator==(const Pokemon &lhs, const Pokemon &rhs) {
@@ -303,7 +303,7 @@ bool operator==(const Pokemon &lhs, const Pokemon &rhs) {
 }
 
 bool operator!=(const Pokemon &lhs, const Pokemon &rhs) {
-   return not (lhs == rhs);
+   return not(lhs == rhs);
 }
 
 std::ostream &operator<<(std::ostream &os, const Pokemon &poke) {

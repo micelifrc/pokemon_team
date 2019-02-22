@@ -7,30 +7,33 @@
 
 #include "Pokemon.h"
 
+struct RegionsFlag {
+   enum Values : unsigned {
+      KANTO = 0x01,
+      JOHTO = 0x02,
+      HOENN = 0x04,
+      SINNOH = 0x08,
+      UNOVA = 0x10,
+      KALOS = 0x20,  // still need implementation
+      ALOLA = 0x40  // still need implementation
+   };
+};
+
+struct InclusionFlag {
+   enum Values : unsigned {
+      STARTERS = 0x01,
+      FOSSILS = 0x02,
+      PSEUDOLEGENDARIES = 0x04,
+      LEGENDARIES = 0x08,
+      MEGAS = 0x10,  // still need implementation
+      ALOLAFORMS = 0x20,  // still need implementation
+      PREEVOLUTIONS = 0x40
+   };
+};
+
 // This class represents a subset of a pokedex of a certain region
 class Pokedex {
 public:
-
-   struct RegionsFlag {
-      enum Values : unsigned {
-         KANTO = 0x01,
-         JOHTO = 0x02,
-         HOENN = 0x04,
-         SINNOH = 0x08,
-         UNOVA = 0x16,  // still need implementation
-         KALOS = 0X32,  // still need implementation
-         ALOLA = 0x64  // still need implementation
-      };
-   };
-   struct InclusionFlag {
-      enum Values : unsigned {
-         STARTERS = 0X01,
-         FOSSILS = 0X02,
-         SEMILEGENDARIES = 0X04,
-         LEGENDARIES = 0X08,
-         PREEVOLUTIONS = 0X16
-      };
-   };
 
    Pokedex() : _matrix{std::move(create_type_pair_matrix())} {}
 
@@ -63,7 +66,10 @@ private:
 template<typename... Args>
 void Pokedex::add_pokemon(Args... args) {
    Pokemon poke{args...};
-   Pokemon::Type second_type = (poke.types().second == Pokemon::Type::Nothing) ? poke.types().first
+   if(poke.types().first == PokeType::Nothing) {
+      throw std::logic_error("The pokedex cannot add a pokemon without a first type");
+   }
+   PokeType second_type = (poke.types().second == PokeType::Nothing) ? poke.types().first
                                                                                : poke.types().second;
    for (const auto &similar_poke: *_matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]) {
       if (similar_poke == poke) {
@@ -76,7 +82,10 @@ void Pokedex::add_pokemon(Args... args) {
 template<typename... Args>
 void Pokedex::remove_pokemon(Args... args) {
    Pokemon poke{args...};
-   Pokemon::Type second_type = (poke.types().second == Pokemon::Type::Nothing) ? poke.types().first
+   if(poke.types().first == PokeType::Nothing) {
+      return;
+   }
+   PokeType second_type = (poke.types().second == PokeType::Nothing) ? poke.types().first
                                                                                : poke.types().second;
    unsigned idx = 0;
    while (idx != _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]->size()) {
