@@ -1248,5 +1248,141 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       }
    }
 
+   if(RegionsFlag::KALOS & regions) {
+      if(InclusionFlag::STARTERS & inclusions) {
+         if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+            add_pokemon(650, "Chespin", PokeType::Grass);
+            add_pokemon(651, "Quilladin", PokeType::Grass);
+         }
+         add_pokemon(652, "Chesnaught", PokeType::Grass, PokeType::Fighting);
+         if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+            add_pokemon(653, "Fennekin", PokeType::Fire);
+            add_pokemon(654, "Braixen", PokeType::Fire);
+         }
+         add_pokemon(655, "Delphox", PokeType::Fire, PokeType::Psychic);
+         if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+            add_pokemon(656, "Froakie", PokeType::Water);
+            add_pokemon(657, "Frogadier", PokeType::Water);
+         }
+         add_pokemon(658, "Greninja", PokeType::Water, PokeType::Dark);
+      }
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(659, "Bunnelby", PokeType::Normal);
+      }
+      add_pokemon(660, "Diggersby", PokeType::Normal, PokeType::Ground);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(661, "Fletchling", PokeType::Normal, PokeType::Flying);
+         add_pokemon(662, "Fletchinder", PokeType::Fire, PokeType::Flying);
+      }
+      add_pokemon(663, "Talonflame", PokeType::Fire, PokeType::Flying);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(664, "Scatterbug", PokeType::Bug);
+         add_pokemon(665, "Spewpa", PokeType::Bug);
+      }
+      add_pokemon(666, "Vivillon", PokeType::Bug, PokeType::Flying);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(667, "Litleo", PokeType::Fire, PokeType::Normal);
+      }
+      add_pokemon(668, "Pyroar", PokeType::Fire, PokeType::Normal);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(669, "Flabebe", PokeType::Fairy);
+         add_pokemon(670, "Floette", PokeType::Fairy);
+      }
+      add_pokemon(671, "Florges", PokeType::Fairy);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(672, "Skiddo", PokeType::Grass);
+      }
+      add_pokemon(673, "Gogoat", PokeType::Grass);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(674, "Pancham", PokeType::Fighting);
+      }
+      add_pokemon(675, "Pangoro", PokeType::Fighting, PokeType::Dark);
+      add_pokemon(676, "Furfrou", PokeType::Normal);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(677, "Espurr", PokeType::Psychic);
+      }
+      add_pokemon(678, "Meowstic", PokeType::Psychic);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(679, "Honedge", PokeType::Steel, PokeType::Ghost);
+         add_pokemon(680, "Doublade", PokeType::Steel, PokeType::Ghost);
+      }
+      add_pokemon(681, "Aegislash", PokeType::Steel, PokeType::Ghost);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(682, "Spritzee", PokeType::Fairy);
+      }
+      add_pokemon(683, "Aromatisse", PokeType::Fairy);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(684, "Swirlix", PokeType::Fairy);
+      }
+      add_pokemon(685, "Slurpuff", PokeType::Fairy);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(686, "Inkay", PokeType::Dark, PokeType::Psychic);
+      }
+      add_pokemon(687, "Malamar", PokeType::Dark, PokeType::Psychic);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(688, "Binacle", PokeType::Rock, PokeType::Water);
+      }
+      add_pokemon(689, "Barbaracle", PokeType::Rock, PokeType::Water);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(690, "Skrelp", PokeType::Poison, PokeType::Water);
+      }
+      add_pokemon(691, "Dragalge", PokeType::Poison, PokeType::Dragon);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(692, "Clauncher", PokeType::Water);
+      }
+      add_pokemon(693, "Clawitzer", PokeType::Water);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(694, "Helioptile", PokeType::Electric, PokeType::Normal);
+      }
+      add_pokemon(695, "Heliolisk", PokeType::Electric, PokeType::Normal);
+      if(InclusionFlag::FOSSILS & inclusions) {
+         if (InclusionFlag::PREEVOLUTIONS & inclusions) {
+            add_pokemon(696, "Tyrunt", PokeType::Rock, PokeType::Dragon);
+         }
+         add_pokemon(697, "Tyrantrum", PokeType::Rock, PokeType::Dragon);
+         if (InclusionFlag::PREEVOLUTIONS & inclusions) {
+            add_pokemon(698, "Amaura", PokeType::Rock, PokeType::Ice);
+         }
+         add_pokemon(699, "Aurorus", PokeType::Rock, PokeType::Ice);
+      }
+      add_pokemon(700, "Sylveon", PokeType::Fairy);
+      add_pokemon(701, "Hawlucha", PokeType::Fighting, PokeType::Flying);
+      add_pokemon(702, "Dedenne", PokeType::Electric, PokeType::Fairy);
+      add_pokemon(703, "Carbink", PokeType::Rock, PokeType::Fairy);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(704, "Goomy", PokeType::Dragon);
+         add_pokemon(705, "Sliggoo", PokeType::Dragon);
+      }
+      if(InclusionFlag::PSEUDOLEGENDARIES & inclusions) {
+         add_pokemon(706, "Goodra", PokeType::Dragon);
+      }
+      add_pokemon(707, "Klefki", PokeType::Steel, PokeType::Fairy);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(708, "Phantump", PokeType::Ghost, PokeType::Grass);
+      }
+      add_pokemon(709, "Trevenant", PokeType::Ghost, PokeType::Grass);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(710, "Pumpkaboo", PokeType::Ghost, PokeType::Grass);
+      }
+      add_pokemon(711, "Gourgeist", PokeType::Ghost, PokeType::Grass);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(712, "Bergmite", PokeType::Ice);
+      }
+      add_pokemon(713, "Avalugg", PokeType::Ice);
+      if(InclusionFlag::PREEVOLUTIONS & inclusions) {
+         add_pokemon(714, "Noibat", PokeType::Flying, PokeType::Dragon);
+      }
+      add_pokemon(715, "Noivern", PokeType::Flying, PokeType::Dragon);
+      if(InclusionFlag::LEGENDARIES & inclusions) {
+         add_pokemon(716, "Xerneas", PokeType::Fairy);
+         add_pokemon(717, "Yvetal", PokeType::Dark, PokeType::Flying);
+         add_pokemon(718, "Zygarde", PokeType::Dragon, PokeType::Ground);
+         add_pokemon(719, "Diancie", PokeType::Rock, PokeType::Fairy);
+         add_pokemon(720, "Hoopa_confined", PokeType::Psychic, PokeType::Ghost);
+         add_pokemon(720, "Hoopa_unbound", PokeType::Psychic, PokeType::Dark);
+         add_pokemon(721, "Volcanion", PokeType::Fire, PokeType::Water);
+      }
+   }
+
    extract_representatives();
 }
