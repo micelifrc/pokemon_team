@@ -326,20 +326,8 @@ std::ostream &operator<<(std::ostream &os, const Pokemon &poke) {
    return os << poke.name();
 }
 
-Pokedex::Pokedex() : _matrix(Pokemon::NUM_TYPES,
-                             std::vector<std::shared_ptr<std::vector<Pokemon>>>(Pokemon::NUM_TYPES, nullptr)) {
-   for (unsigned x = 0; x != Pokemon::NUM_TYPES; ++x) {
-      for (unsigned y = 0; y != Pokemon::NUM_TYPES; ++y) {
-         if (x <= y) {
-            _matrix[x][y] = std::make_shared<std::vector<Pokemon>>(std::vector<Pokemon>(0));
-         } else {
-            _matrix[x][y] = _matrix[y][x];
-         }
-      }
-   }
-}
-
 void Pokedex::extract_representatives() {
+   _representatives.clear();
    for (unsigned x = 0; x != Pokemon::NUM_TYPES; ++x) {
       for (unsigned y = x; y != Pokemon::NUM_TYPES; ++y) {
          if (not _matrix[x][y]->empty()) {
@@ -347,6 +335,21 @@ void Pokedex::extract_representatives() {
          }
       }
    }
+}
+
+std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, Pokemon::NUM_TYPES>, Pokemon::NUM_TYPES>
+Pokedex::create_type_pair_matrix() {
+   std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, Pokemon::NUM_TYPES>, Pokemon::NUM_TYPES> matrix;
+   for (unsigned x = 0; x != Pokemon::NUM_TYPES; ++x) {
+      for (unsigned y = 0; y != Pokemon::NUM_TYPES; ++y) {
+         if (x <= y) {
+            matrix[x][y] = std::make_shared<std::vector<Pokemon>>(std::vector<Pokemon>(0));
+         } else {
+            matrix[x][y] = matrix[y][x];
+         }
+      }
+   }
+   return matrix;
 }
 
 const Pokemon &PokeTeam::operator[](unsigned idx) const {

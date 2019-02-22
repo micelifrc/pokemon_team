@@ -94,7 +94,7 @@ std::ostream &operator<<(std::ostream &os, const Pokemon &poke);
 class Pokedex {
 public:
 
-   Pokedex();
+   Pokedex() : _matrix{std::move(create_type_pair_matrix())} {}
 
    const std::vector<const Pokemon *> &representatives() const { return _representatives; }
 
@@ -109,9 +109,12 @@ public:
    void extract_representatives();
 
 private:
+   static std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, Pokemon::NUM_TYPES>, Pokemon::NUM_TYPES>
+   create_type_pair_matrix();
+
    // A matrix containing pointers to vectors containing all the pokemon for that pair of type in the pokedex
    // The order of the types is not relevant, and if a pokemon is single-type, it is in the diagonal of the matrix
-   std::vector<std::vector<std::shared_ptr<std::vector<Pokemon> > > > _matrix;
+   std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, Pokemon::NUM_TYPES>, Pokemon::NUM_TYPES> _matrix;
    // One pokemon for each pair of types in the pokedex
    std::vector<const Pokemon *> _representatives;
 };
