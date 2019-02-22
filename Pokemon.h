@@ -76,14 +76,6 @@ private:
 
 bool share_type(const Pokemon &lhs, const Pokemon &rhs);  // returns true iff @p lhs and @p rhs share at least one type
 
-bool operator<(const Pokemon &lhs, const Pokemon &rhs);
-
-bool operator>(const Pokemon &lhs, const Pokemon &rhs);
-
-bool operator<=(const Pokemon &lhs, const Pokemon &rhs);
-
-bool operator>=(const Pokemon &lhs, const Pokemon &rhs);
-
 bool operator==(const Pokemon &lhs, const Pokemon &rhs);
 
 bool operator!=(const Pokemon &lhs, const Pokemon &rhs);

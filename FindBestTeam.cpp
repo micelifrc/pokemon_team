@@ -15,8 +15,8 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
    if (last_generation_to_include_ == 0) {
       throw std::invalid_argument("Should include pokemon of some generation");
    }
-   if (last_generation_to_include_ > 3) {
-      throw std::invalid_argument("Generations after gen.3 are not implemented yet");
+   if (last_generation_to_include_ > 4) {
+      throw std::invalid_argument("Generations after gen.4 are not implemented yet");
    }
    if (_num_fixed_pokemon > 6) {
       throw std::invalid_argument("Cannot complete at team that already has more than 6 pokemon");
@@ -46,10 +46,14 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
       add_kanto_pokedex(_pokedex, include_starters_, include_ancients_, include_semilegendaries_, include_legendaries_);
    }
    if (last_generation_to_include_ >= 2) {
-      add_johto_pokedex(_pokedex, include_starters_, include_ancients_, include_semilegendaries_, include_legendaries_);
+      add_johto_pokedex(_pokedex, include_starters_, include_semilegendaries_, include_legendaries_);
    }
    if (last_generation_to_include_ >= 3) {
       add_hoenn_pokedex(_pokedex, include_starters_, include_ancients_, include_semilegendaries_, include_legendaries_);
+   }
+   if (last_generation_to_include_ >= 4) {
+      add_sinnoh_pokedex(_pokedex, include_starters_, include_ancients_, include_semilegendaries_,
+                         include_legendaries_);
    }
    _pokedex.extract_representatives();
 }
@@ -195,7 +199,7 @@ void FindBestTeam::add_kanto_pokedex(Pokedex &pokedex, bool include_starters, bo
 }
 
 
-void FindBestTeam::add_johto_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients,
+void FindBestTeam::add_johto_pokedex(Pokedex &pokedex, bool include_starters,
                                      bool include_semilegendaries, bool include_legendaries) noexcept {
    if (include_starters) {
       pokedex.add_pokemon(154, "Meganium", Pokemon::Type::Grass);
@@ -359,5 +363,128 @@ void FindBestTeam::add_hoenn_pokedex(Pokedex &pokedex, bool include_starters, bo
       pokedex.add_pokemon(384, "Rayquaza", Pokemon::Type::Dragon, Pokemon::Type::Flying);
       pokedex.add_pokemon(385, "Jirachi", Pokemon::Type::Steel, Pokemon::Type::Psychic);
       pokedex.add_pokemon(386, "Deoxys", Pokemon::Type::Psychic);
+   }
+}
+
+void FindBestTeam::add_sinnoh_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients,
+                                      bool include_semilegendaries, bool include_legendaries) noexcept {
+   if (include_starters) {
+      pokedex.add_pokemon(389, "Torterra", Pokemon::Type::Grass, Pokemon::Type::Ground);
+      pokedex.add_pokemon(392, "Infernape", Pokemon::Type::Fire, Pokemon::Type::Fighting);
+      pokedex.add_pokemon(395, "Empoleon", Pokemon::Type::Water, Pokemon::Type::Steel);
+   }
+   pokedex.add_pokemon(398, "Staraptor", Pokemon::Type::Normal, Pokemon::Type::Flying);
+   pokedex.add_pokemon(400, "Bibarel", Pokemon::Type::Normal, Pokemon::Type::Water);
+   pokedex.add_pokemon(402, "Kricketune", Pokemon::Type::Bug);
+   pokedex.add_pokemon(405, "Luxray", Pokemon::Type::Electric);
+   pokedex.remove_pokemon(315, "Roselia", Pokemon::Type::Grass, Pokemon::Type::Poison);
+   pokedex.add_pokemon(407, "Roserade", Pokemon::Type::Grass, Pokemon::Type::Poison);
+   if (include_ancients) {
+      pokedex.add_pokemon(409, "Rampardos", Pokemon::Type::Rock);
+      pokedex.add_pokemon(411, "Bastiadon", Pokemon::Type::Rock, Pokemon::Type::Steel);
+   }
+   pokedex.add_pokemon(413, "Wormadam_grass", Pokemon::Type::Bug, Pokemon::Type::Grass);
+   pokedex.add_pokemon(413, "Wormadam_ground", Pokemon::Type::Bug, Pokemon::Type::Ground);
+   pokedex.add_pokemon(413, "Wormadam_steel", Pokemon::Type::Bug, Pokemon::Type::Steel);
+   pokedex.add_pokemon(414, "Mothim", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(416, "Vespiquen", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(417, "Pachirisu", Pokemon::Type::Electric);
+   pokedex.add_pokemon(419, "Floatzel", Pokemon::Type::Water);
+   pokedex.add_pokemon(421, "Cherrim", Pokemon::Type::Grass);
+   pokedex.add_pokemon(423, "Gastrodon", Pokemon::Type::Water, Pokemon::Type::Ground);
+   pokedex.remove_pokemon(190, "Aipom", Pokemon::Type::Normal);
+   pokedex.add_pokemon(424, "Ambipom", Pokemon::Type::Normal);
+   pokedex.add_pokemon(426, "Drifblim", Pokemon::Type::Ghost, Pokemon::Type::Flying);
+   pokedex.add_pokemon(428, "Lopunny", Pokemon::Type::Normal, Pokemon::Type::Fighting);
+   pokedex.remove_pokemon(200, "Misdreavus", Pokemon::Type::Ghost);
+   pokedex.add_pokemon(429, "Mismagius", Pokemon::Type::Ghost);
+   pokedex.remove_pokemon(198, "Murkrow", Pokemon::Type::Dark, Pokemon::Type::Flying);
+   pokedex.add_pokemon(430, "Honchkrow", Pokemon::Type::Dark, Pokemon::Type::Flying);
+   pokedex.add_pokemon(432, "Perugly", Pokemon::Type::Normal);
+   pokedex.add_pokemon(435, "Skuntank", Pokemon::Type::Poison, Pokemon::Type::Dark);
+   pokedex.add_pokemon(437, "Bronzong", Pokemon::Type::Steel, Pokemon::Type::Psychic);
+   pokedex.add_pokemon(441, "Chatot", Pokemon::Type::Normal, Pokemon::Type::Flying);
+   pokedex.add_pokemon(442, "Spiritomb", Pokemon::Type::Ghost, Pokemon::Type::Dark);
+   if (include_semilegendaries) {
+      pokedex.add_pokemon(445, "Garchomp", Pokemon::Type::Dragon, Pokemon::Type::Ground);
+   }
+   pokedex.add_pokemon(448, "Lucario", Pokemon::Type::Fighting, Pokemon::Type::Steel);
+   pokedex.add_pokemon(450, "Hippowdon", Pokemon::Type::Ground);
+   pokedex.add_pokemon(452, "Drapion", Pokemon::Type::Poison, Pokemon::Type::Dark);
+   pokedex.add_pokemon(454, "Toxicroak", Pokemon::Type::Poison, Pokemon::Type::Fighting);
+   pokedex.add_pokemon(455, "Carnivine", Pokemon::Type::Grass);
+   pokedex.add_pokemon(457, "Lumineon", Pokemon::Type::Water);
+   pokedex.add_pokemon(460, "Abomasnow", Pokemon::Type::Grass, Pokemon::Type::Ice);
+   pokedex.remove_pokemon(215, "Sneasel", Pokemon::Type::Dark, Pokemon::Type::Ice);
+   pokedex.add_pokemon(461, "Weavile", Pokemon::Type::Dark, Pokemon::Type::Ice);
+   pokedex.remove_pokemon(82, "Magneton", Pokemon::Type::Electric, Pokemon::Type::Steel);
+   pokedex.add_pokemon(462, "Magnezone", Pokemon::Type::Electric, Pokemon::Type::Steel);
+   pokedex.remove_pokemon(108, "Lickitung", Pokemon::Type::Normal);
+   pokedex.add_pokemon(463, "Lickilicky", Pokemon::Type::Normal);
+   pokedex.remove_pokemon(112, "Rhydon", Pokemon::Type::Ground, Pokemon::Type::Rock);
+   pokedex.add_pokemon(464, "Rhyperior", Pokemon::Type::Ground, Pokemon::Type::Rock);
+   pokedex.remove_pokemon(114, "Tangela", Pokemon::Type::Grass);
+   pokedex.add_pokemon(465, "Tangrowth", Pokemon::Type::Grass);
+   pokedex.remove_pokemon(125, "Electabuzz", Pokemon::Type::Electric);
+   pokedex.add_pokemon(466, "Electivire", Pokemon::Type::Electric);
+   pokedex.remove_pokemon(126, "Magmar", Pokemon::Type::Fire);
+   pokedex.add_pokemon(467, "Magmortar", Pokemon::Type::Fire);
+   pokedex.remove_pokemon(176, "Togetic", Pokemon::Type::Fairy, Pokemon::Type::Flying);
+   pokedex.add_pokemon(468, "Togekiss", Pokemon::Type::Fairy, Pokemon::Type::Flying);
+   pokedex.remove_pokemon(193, "Yanma", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(469, "Yanmega", Pokemon::Type::Bug, Pokemon::Type::Flying);
+   pokedex.add_pokemon(470, "Leafeon", Pokemon::Type::Grass);
+   pokedex.add_pokemon(471, "Glaceon", Pokemon::Type::Ice);
+   pokedex.remove_pokemon(207, "Gligar", Pokemon::Type::Ground, Pokemon::Type::Flying);
+   pokedex.add_pokemon(472, "Gliscor", Pokemon::Type::Ground, Pokemon::Type::Flying);
+   pokedex.remove_pokemon(221, "Piloswine", Pokemon::Type::Ice, Pokemon::Type::Ground);
+   pokedex.add_pokemon(473, "Mamoswine", Pokemon::Type::Ice, Pokemon::Type::Ground);
+   pokedex.remove_pokemon(137, "Porygon", Pokemon::Type::Normal);
+   pokedex.add_pokemon(474, "Porygon-Z", Pokemon::Type::Normal);
+   pokedex.add_pokemon(475, "Gallade", Pokemon::Type::Psychic, Pokemon::Type::Fighting);
+   pokedex.remove_pokemon(299, "Nosepass", Pokemon::Type::Rock);
+   pokedex.add_pokemon(476, "Probopass", Pokemon::Type::Rock, Pokemon::Type::Steel);
+   pokedex.remove_pokemon(356, "Dusclops", Pokemon::Type::Ghost);
+   pokedex.add_pokemon(477, "Dusknoir", Pokemon::Type::Ghost);
+   pokedex.add_pokemon(478, "Froslass", Pokemon::Type::Ice, Pokemon::Type::Ghost);
+   pokedex.add_pokemon(479, "Rotom_ghost", Pokemon::Type::Electric, Pokemon::Type::Ghost);
+   pokedex.add_pokemon(479, "Rotom_fire", Pokemon::Type::Electric, Pokemon::Type::Fire);
+   pokedex.add_pokemon(479, "Rotom_water", Pokemon::Type::Electric, Pokemon::Type::Water);
+   pokedex.add_pokemon(479, "Rotom_ice", Pokemon::Type::Electric, Pokemon::Type::Ice);
+   pokedex.add_pokemon(479, "Rotom_flying", Pokemon::Type::Electric, Pokemon::Type::Flying);
+   pokedex.add_pokemon(479, "Rotom_grass", Pokemon::Type::Electric, Pokemon::Type::Grass);
+   if (include_legendaries) {
+      pokedex.add_pokemon(480, "Uxie", Pokemon::Type::Psychic);
+      pokedex.add_pokemon(481, "Mesprit", Pokemon::Type::Psychic);
+      pokedex.add_pokemon(482, "Azelf", Pokemon::Type::Psychic);
+      pokedex.add_pokemon(483, "Dialga", Pokemon::Type::Steel, Pokemon::Type::Dragon);
+      pokedex.add_pokemon(484, "Palkia", Pokemon::Type::Water, Pokemon::Type::Dragon);
+      pokedex.add_pokemon(485, "Heatran", Pokemon::Type::Fire, Pokemon::Type::Steel);
+      pokedex.add_pokemon(486, "Regigigas", Pokemon::Type::Normal);
+      pokedex.add_pokemon(487, "Giratina", Pokemon::Type::Ghost, Pokemon::Type::Dragon);
+      pokedex.add_pokemon(488, "Cresselia", Pokemon::Type::Psychic);
+      pokedex.add_pokemon(489, "Phione", Pokemon::Type::Water);
+      pokedex.add_pokemon(490, "Manaphy", Pokemon::Type::Water);
+      pokedex.add_pokemon(491, "Darkrai", Pokemon::Type::Dark);
+      pokedex.add_pokemon(492, "Shaymin", Pokemon::Type::Grass);
+      pokedex.add_pokemon(492, "Shaymin_flying", Pokemon::Type::Grass, Pokemon::Type::Flying);
+      pokedex.add_pokemon(493, "Arceus_normal", Pokemon::Type::Normal);
+      pokedex.add_pokemon(493, "Arceus_fighting", Pokemon::Type::Fighting);
+      pokedex.add_pokemon(493, "Arceus_flying", Pokemon::Type::Flying);
+      pokedex.add_pokemon(493, "Arceus_poison", Pokemon::Type::Poison);
+      pokedex.add_pokemon(493, "Arceus_ground", Pokemon::Type::Ground);
+      pokedex.add_pokemon(493, "Arceus_rock", Pokemon::Type::Rock);
+      pokedex.add_pokemon(493, "Arceus_bug", Pokemon::Type::Bug);
+      pokedex.add_pokemon(493, "Arceus_ghost", Pokemon::Type::Ghost);
+      pokedex.add_pokemon(493, "Arceus_steel", Pokemon::Type::Steel);
+      pokedex.add_pokemon(493, "Arceus_fire", Pokemon::Type::Fire);
+      pokedex.add_pokemon(493, "Arceus_water", Pokemon::Type::Water);
+      pokedex.add_pokemon(493, "Arceus_grass", Pokemon::Type::Grass);
+      pokedex.add_pokemon(493, "Arceus_electric", Pokemon::Type::Electric);
+      pokedex.add_pokemon(493, "Arceus_psychic", Pokemon::Type::Psychic);
+      pokedex.add_pokemon(493, "Arceus_ice", Pokemon::Type::Ice);
+      pokedex.add_pokemon(493, "Arceus_dragon", Pokemon::Type::Dragon);
+      pokedex.add_pokemon(493, "Arceus_dark", Pokemon::Type::Dark);
+      pokedex.add_pokemon(493, "Arceus_fairy", Pokemon::Type::Fairy);
    }
 }

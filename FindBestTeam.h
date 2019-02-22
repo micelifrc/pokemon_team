@@ -12,7 +12,7 @@ class FindBestTeam {
 public:
    FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
                 bool consider_defence_ = true, bool consider_offence_ = false, int filter_factor_ = 1,
-                unsigned last_generation_to_include_ = 3, bool include_starters_ = false,
+                unsigned last_generation_to_include_ = 4, bool include_starters_ = false,
                 bool include_ancients_ = false, bool include_semilegendaries_ = false,
                 bool include_legendaries_ = false, bool allow_type_repetitions_ = true);
 
@@ -28,12 +28,16 @@ private:
                      bool include_legendaries) noexcept;
 
    static void
-   add_johto_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients, bool include_semilegendaries,
+   add_johto_pokedex(Pokedex &pokedex, bool include_starters, bool include_semilegendaries,
                      bool include_legendaries) noexcept;
 
    static void
    add_hoenn_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients, bool include_semilegendaries,
                      bool include_legendaries) noexcept;
+
+   static void
+   add_sinnoh_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients, bool include_semilegendaries,
+                      bool include_legendaries) noexcept;
 
    unsigned _num_fixed_pokemon;  // the number of pokemon we specify from constructor
    std::vector<PokeTeam> &_best_teams;  // the list of all best teams found

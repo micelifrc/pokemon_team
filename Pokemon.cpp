@@ -298,28 +298,12 @@ bool share_type(const Pokemon &lhs, const Pokemon &rhs) {
           (lhs.types().second == rhs.types().second and lhs.types().second != Pokemon::Type::Nothing);
 }
 
-bool operator<(const Pokemon &lhs, const Pokemon &rhs) {
-   return lhs.id() < rhs.id();
-}
-
-bool operator>(const Pokemon &lhs, const Pokemon &rhs) {
-   return lhs.id() > rhs.id();
-}
-
-bool operator<=(const Pokemon &lhs, const Pokemon &rhs) {
-   return lhs.id() <= rhs.id();
-}
-
-bool operator>=(const Pokemon &lhs, const Pokemon &rhs) {
-   return lhs.id() >= rhs.id();
-}
-
 bool operator==(const Pokemon &lhs, const Pokemon &rhs) {
    return lhs.id() == rhs.id();
 }
 
 bool operator!=(const Pokemon &lhs, const Pokemon &rhs) {
-   return lhs.id() != rhs.id();
+   return not (lhs == rhs);
 }
 
 std::ostream &operator<<(std::ostream &os, const Pokemon &poke) {
