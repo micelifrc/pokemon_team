@@ -25,9 +25,10 @@ struct InclusionFlag {
       FOSSILS = 0x02,
       PSEUDOLEGENDARIES = 0x04,
       LEGENDARIES = 0x08,
-      MEGAS = 0x10,  // still need implementation
-      ALOLAFORMS = 0x20,  // still need implementation
-      PREEVOLUTIONS = 0x40
+      MYSTERIOUS = 0x10,
+      MEGAS = 0x20,  // still need implementation
+      ALOLAFORMS = 0x40,  // still need implementation
+      PREEVOLUTIONS = 0x80
    };
 };
 

@@ -329,6 +329,8 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       }
       if (InclusionFlag::LEGENDARIES & inclusions) {
          add_pokemon(150, "MewTwo", PokeType::Psychic);
+      }
+      if (InclusionFlag::MYSTERIOUS & inclusions) {
          add_pokemon(151, "Mew", PokeType::Psychic);
       }
    }
@@ -512,6 +514,8 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       if (InclusionFlag::LEGENDARIES & inclusions) {
          add_pokemon(249, "Lugia", PokeType::Psychic, PokeType::Flying);
          add_pokemon(250, "Ho-Oh", PokeType::Fire, PokeType::Flying);
+      }
+      if (InclusionFlag::MYSTERIOUS & inclusions) {
          add_pokemon(251, "Celebi", PokeType::Psychic, PokeType::Grass);
       }
    }
@@ -753,6 +757,8 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(382, "Kyogre", PokeType::Water);
          add_pokemon(383, "Groudon", PokeType::Ground);
          add_pokemon(384, "Rayquaza", PokeType::Dragon, PokeType::Flying);
+      }
+      if (InclusionFlag::MYSTERIOUS & inclusions) {
          add_pokemon(385, "Jirachi", PokeType::Steel, PokeType::Psychic);
          add_pokemon(386, "Deoxys", PokeType::Psychic);
       }
@@ -940,6 +946,8 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(486, "Regigigas", PokeType::Normal);
          add_pokemon(487, "Giratina", PokeType::Ghost, PokeType::Dragon);
          add_pokemon(488, "Cresselia", PokeType::Psychic);
+      }
+      if (InclusionFlag::MYSTERIOUS & inclusions) {
          add_pokemon(489, "Phione", PokeType::Water);
          add_pokemon(490, "Manaphy", PokeType::Water);
          add_pokemon(491, "Darkrai", PokeType::Dark);
@@ -967,7 +975,7 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
    }
 
    if (RegionsFlag::ALOLA & regions) {
-      if (InclusionFlag::LEGENDARIES & inclusions) {
+      if (InclusionFlag::MYSTERIOUS & inclusions) {
          add_pokemon(494, "Victini", PokeType::Psychic, PokeType::Fire);
       }
       if (InclusionFlag::STARTERS & inclusions) {
@@ -1241,6 +1249,8 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(644, "Zekrom", PokeType::Dragon, PokeType::Electric);
          add_pokemon(645, "Landorus", PokeType::Ground, PokeType::Flying);
          add_pokemon(646, "Kyurem", PokeType::Dragon, PokeType::Ice);
+      }
+      if (InclusionFlag::MYSTERIOUS & inclusions) {
          add_pokemon(647, "Keldeo", PokeType::Water, PokeType::Fighting);
          add_pokemon(648, "Meloetta_psychic", PokeType::Normal, PokeType::Psychic);
          add_pokemon(648, "Meloetta_fighting", PokeType::Normal, PokeType::Fighting);
@@ -1377,6 +1387,8 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(716, "Xerneas", PokeType::Fairy);
          add_pokemon(717, "Yvetal", PokeType::Dark, PokeType::Flying);
          add_pokemon(718, "Zygarde", PokeType::Dragon, PokeType::Ground);
+      }
+      if (InclusionFlag::MYSTERIOUS & inclusions) {
          add_pokemon(719, "Diancie", PokeType::Rock, PokeType::Fairy);
          add_pokemon(720, "Hoopa_confined", PokeType::Psychic, PokeType::Ghost);
          add_pokemon(720, "Hoopa_unbound", PokeType::Psychic, PokeType::Dark);
