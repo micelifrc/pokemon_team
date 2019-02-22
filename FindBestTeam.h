@@ -6,15 +6,26 @@
 #define POKEMON_TEAM_FINDBESTTEAM_H
 
 #include <functional>
-#include "Pokemon.h"
+#include "Pokedex.h"
 
 class FindBestTeam {
 public:
+   /**
+    * Creates an instance for FindBestTeam to find the best possible team extension
+    * @param fixed_pokemon_ The pokemon you want in your team (can be empty)
+    * @param best_teams_ The list of the teams realizing the optimum objective (the output)
+    * @param inclusions_ A flag from InclusionFlag to say which kinds of pokemon we should consider
+    * @param last_generation_to_include_ The last generation to include. In future cound be replaced with another flag
+    * @param consider_defence_ You should consider the defensive resistances in the objective?
+    * @param consider_offence_ You should consider the offensive effectiveness in the objective?
+    * @param filter_factor_ A value in order to also consider effectiveness, and not just weakness.
+    * @param allow_type_repetitions_ Do you allow two pokemon in your team to share (at least) one type?
+    */
    FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
-                bool consider_defence_ = true, bool consider_offence_ = false, int filter_factor_ = 1,
-                unsigned last_generation_to_include_ = 4, bool include_starters_ = false,
-                bool include_ancients_ = false, bool include_semilegendaries_ = false,
-                bool include_legendaries_ = false, bool allow_type_repetitions_ = true);
+                unsigned regions_ = Pokedex::RegionsFlag::KALOS | Pokedex::RegionsFlag::JOHTO |
+                               Pokedex::RegionsFlag::HOENN | Pokedex::RegionsFlag::SINNOH,
+                unsigned inclusions_ = Pokedex::InclusionFlag::STARTERS, bool consider_defence_ = true,
+                bool consider_offence_ = false, int filter_factor_ = 1, bool allow_type_repetitions_ = true);
 
    // Will find the best possible team, for the first _num_fixed_pokemon already fixed in _current_team
    int find_best_teams();
@@ -22,22 +33,6 @@ public:
 private:
    // The main looping procedure for operator()
    void find_best_team_loop_iter(unsigned already_in_team, unsigned long next_to_try);
-
-   static void
-   add_kanto_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients, bool include_semilegendaries,
-                     bool include_legendaries) noexcept;
-
-   static void
-   add_johto_pokedex(Pokedex &pokedex, bool include_starters, bool include_semilegendaries,
-                     bool include_legendaries) noexcept;
-
-   static void
-   add_hoenn_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients, bool include_semilegendaries,
-                     bool include_legendaries) noexcept;
-
-   static void
-   add_sinnoh_pokedex(Pokedex &pokedex, bool include_starters, bool include_ancients, bool include_semilegendaries,
-                      bool include_legendaries) noexcept;
 
    unsigned _num_fixed_pokemon;  // the number of pokemon we specify from constructor
    std::vector<PokeTeam> &_best_teams;  // the list of all best teams found

@@ -310,32 +310,6 @@ std::ostream &operator<<(std::ostream &os, const Pokemon &poke) {
    return os << poke.name();
 }
 
-void Pokedex::extract_representatives() {
-   _representatives.clear();
-   for (unsigned x = 0; x != Pokemon::NUM_TYPES; ++x) {
-      for (unsigned y = x; y != Pokemon::NUM_TYPES; ++y) {
-         if (not _matrix[x][y]->empty()) {
-            _representatives.emplace_back(&_matrix[x][y]->front());
-         }
-      }
-   }
-}
-
-std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, Pokemon::NUM_TYPES>, Pokemon::NUM_TYPES>
-Pokedex::create_type_pair_matrix() {
-   std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, Pokemon::NUM_TYPES>, Pokemon::NUM_TYPES> matrix;
-   for (unsigned x = 0; x != Pokemon::NUM_TYPES; ++x) {
-      for (unsigned y = 0; y != Pokemon::NUM_TYPES; ++y) {
-         if (x <= y) {
-            matrix[x][y] = std::make_shared<std::vector<Pokemon>>(std::vector<Pokemon>(0));
-         } else {
-            matrix[x][y] = matrix[y][x];
-         }
-      }
-   }
-   return matrix;
-}
-
 const Pokemon &PokeTeam::operator[](unsigned idx) const {
    if (idx >= 6) {
       throw std::out_of_range("Invalid call of operator[] for PokeTeam. There are only 6 pokemon in the team");
