@@ -9,26 +9,27 @@
 
 struct RegionsFlag {
    enum Values : unsigned {
-      KANTO = 0x01,
-      JOHTO = 0x02,
-      HOENN = 0x04,
-      SINNOH = 0x08,
-      UNOVA = 0x10,
-      KALOS = 0x20,  // still need implementation
-      ALOLA = 0x40  // still need implementation
+      KANTO = 0x0001,
+      JOHTO = 0x0002,
+      HOENN = 0x0004,
+      SINNOH = 0x0008,
+      UNOVA = 0x0010,
+      KALOS = 0x0020,  // still need implementation
+      ALOLA = 0x0040  // still need implementation
    };
 };
 
 struct InclusionFlag {
    enum Values : unsigned {
-      STARTERS = 0x01,
-      FOSSILS = 0x02,
-      PSEUDOLEGENDARIES = 0x04,
-      LEGENDARIES = 0x08,
-      MYSTERIOUS = 0x10,
-      MEGAS = 0x20,  // still need implementation
-      ALOLAFORMS = 0x40,  // still need implementation
-      PREEVOLUTIONS = 0x80
+      STARTERS = 0x0001,
+      FOSSILS = 0x0002,
+      PSEUDOLEGENDARIES = 0x0004,
+      LEGENDARIES = 0x0008,
+      MYSTERIOUS = 0x0010,
+      MEGAS = 0x0020,  // still need implementation
+      ALOLAFORMS = 0x0040,  // still need implementation
+      ULTRACREATURES = 0x0080,
+      PREEVOLUTIONS = 0x0100,
    };
 };
 
