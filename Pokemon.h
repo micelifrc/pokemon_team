@@ -44,13 +44,10 @@ public:
       Ineffective = -10
    };
 
-   explicit Pokemon(unsigned id_ = 0, std::string name_ = "", PokeType type1 = PokeType::Nothing,
+   explicit Pokemon(int id_ = 0, int total_stats_ = 0, std::string name_ = "", PokeType type1 = PokeType::Nothing,
                     PokeType type2 = PokeType::Nothing) :
-         _id{id_}, _name{std::move(name_)}, _types{type1, type2} {}
-
-   explicit Pokemon(int id_, std::string name_ = "", PokeType type1 = PokeType::Nothing,
-                    PokeType type2 = PokeType::Nothing) :
-         _id{static_cast<unsigned>(id_)}, _name{std::move(name_)}, _types{type1, type2} {}
+         _id{static_cast<unsigned>(id_)}, _total_stats{static_cast<unsigned>(total_stats_)}, _name{std::move(name_)},
+         _types{type1, type2} {}
 
    // Positive if the pokemon has good resistance, negative if the pokemon has bad resistance
    int resistance(PokeType enemy_type) const;
@@ -63,6 +60,8 @@ public:
 
    unsigned id() const { return _id; }
 
+   unsigned total_stats() const { return _total_stats; }
+
    const std::string &name() const { return _name; }
 
    const std::pair<PokeType, PokeType> &types() const { return _types; }
@@ -72,6 +71,7 @@ private:
    static Effectiveness effectiveness(PokeType atk, PokeType def);
 
    unsigned _id;
+   unsigned _total_stats;  // the sum of the 6 stats of the pokemon
    std::string _name;
    std::pair<PokeType, PokeType> _types;
 };
@@ -94,9 +94,16 @@ public:
 
    Pokemon &operator[](unsigned idx);
 
+   unsigned sum_stats() const {
+      return _pokemon_list[0].total_stats() + _pokemon_list[1].total_stats() + _pokemon_list[2].total_stats() +
+             _pokemon_list[3].total_stats() + _pokemon_list[4].total_stats() + _pokemon_list[5].total_stats();
+   }
+
 private:
    std::array<Pokemon, 6> _pokemon_list;
 };
+
+bool operator<(const PokeTeam &lhs, const PokeTeam &rhs);
 
 std::ostream &operator<<(std::ostream &os, const PokeTeam &pt);
 

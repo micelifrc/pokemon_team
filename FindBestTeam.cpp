@@ -39,6 +39,7 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
 
 int FindBestTeam::find_best_teams() {
    find_best_team_loop_iter(_num_fixed_pokemon, 0);
+   std::sort(_best_teams.begin(), _best_teams.end());
    return _max_score;
 }
 

@@ -22,9 +22,12 @@ public:
     * @param allow_type_repetitions_ Do you allow two pokemon in your team to share (at least) one type?
     */
    FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
-                unsigned regions_ = RegionsFlag::KALOS | RegionsFlag::JOHTO | RegionsFlag::HOENN | RegionsFlag::SINNOH |
+                unsigned regions_ = RegionsFlag::KANTO | RegionsFlag::JOHTO | RegionsFlag::HOENN | RegionsFlag::SINNOH |
                                     RegionsFlag::UNOVA | RegionsFlag::KALOS | RegionsFlag::ALOLA,
-                unsigned inclusions_ = InclusionFlag::STARTERS, bool consider_defence_ = true,
+                unsigned inclusions_ = InclusionFlag::STARTERS | InclusionFlag::FOSSILS |
+                                       InclusionFlag::PSEUDOLEGENDARIES | InclusionFlag::ALOLAFORMS |
+                                       InclusionFlag::PREEVOLUTIONS,
+                bool consider_defence_ = true,
                 bool consider_offence_ = false, int filter_factor_ = 1, bool allow_type_repetitions_ = true);
 
    // Will find the best possible team, for the first _num_fixed_pokemon already fixed in _current_team

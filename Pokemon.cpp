@@ -321,10 +321,14 @@ Pokemon &PokeTeam::operator[](unsigned idx) {
    return const_cast<Pokemon &>(static_cast<const PokeTeam &>(*this)[idx]);
 }
 
+bool operator<(const PokeTeam &lhs, const PokeTeam &rhs) {
+   return lhs.sum_stats() < rhs.sum_stats();
+}
+
 std::ostream &operator<<(std::ostream &os, const PokeTeam &pt) {
    os << '[' << pt[0];
    for (unsigned idx = 1; idx != 6; ++idx) {
       os << ", " << pt[idx];
    }
-   return os << ']';
+   return os << "] = " << pt.sum_stats();
 }
