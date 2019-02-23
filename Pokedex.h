@@ -14,8 +14,8 @@ struct RegionsFlag {
       HOENN = 0x0004,
       SINNOH = 0x0008,
       UNOVA = 0x0010,
-      KALOS = 0x0020,  // still need implementation
-      ALOLA = 0x0040  // still need implementation
+      KALOS = 0x0020,
+      ALOLA = 0x0040
    };
 };
 
@@ -26,8 +26,8 @@ struct InclusionFlag {
       PSEUDOLEGENDARIES = 0x0004,
       LEGENDARIES = 0x0008,
       MYSTERIOUS = 0x0010,
-      MEGAS = 0x0020,  // still need implementation
-      ALOLAFORMS = 0x0040,  // still need implementation
+      MEGAS = 0x0020,
+      ALOLAFORMS = 0x0040,
       ULTRACREATURES = 0x0080,
       PREEVOLUTIONS = 0x0100,
    };

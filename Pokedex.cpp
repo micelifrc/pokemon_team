@@ -44,16 +44,26 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
             add_pokemon(2, "Ivysaur", PokeType::Grass, PokeType::Poison);
          }
          add_pokemon(3, "Venusaur", PokeType::Grass, PokeType::Poison);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(3, "MegaVenusaur", PokeType::Grass, PokeType::Poison);
+         }
          if (InclusionFlag::PREEVOLUTIONS & inclusions) {
             add_pokemon(4, "Charmander", PokeType::Fire);
             add_pokemon(5, "Charmeleon", PokeType::Fire);
          }
          add_pokemon(6, "Charizard", PokeType::Fire, PokeType::Flying);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(6, "MegaCharizardX", PokeType::Fire, PokeType::Dragon);
+            add_pokemon(6, "MegaCharizardY", PokeType::Fire, PokeType::Flying);
+         }
          if (InclusionFlag::PREEVOLUTIONS & inclusions) {
             add_pokemon(7, "Squirtle", PokeType::Water);
             add_pokemon(8, "Wartortle", PokeType::Water);
          }
          add_pokemon(9, "Blastoise", PokeType::Water);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(9, "MegaBlastoise", PokeType::Water);
+         }
       }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(10, "Caterpie", PokeType::Bug);
@@ -65,15 +75,27 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(14, "Kakuna", PokeType::Bug, PokeType::Poison);
       }
       add_pokemon(15, "Beedrill", PokeType::Bug, PokeType::Poison);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(15, "MegaBeedrill", PokeType::Bug, PokeType::Poison);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(16, "Pidgey", PokeType::Normal, PokeType::Flying);
          add_pokemon(17, "Pidgeotto", PokeType::Normal, PokeType::Flying);
       }
       add_pokemon(18, "Pidgeot", PokeType::Normal, PokeType::Flying);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(18, "MegaPidgeot", PokeType::Normal, PokeType::Flying);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(19, "Rattata", PokeType::Normal);
+         if (InclusionFlag::ALOLAFORMS & inclusions) {
+            add_pokemon(19, "AlolanRattata", PokeType::Dark, PokeType::Normal);
+         }
       }
       add_pokemon(20, "Raticate", PokeType::Normal);
+      if (InclusionFlag::ALOLAFORMS & inclusions) {
+         add_pokemon(20, "AlolanRaticate", PokeType::Dark, PokeType::Normal);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(21, "Spearow", PokeType::Normal, PokeType::Flying);
       }
@@ -86,10 +108,19 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(25, "Pikachu", PokeType::Electric);
       }
       add_pokemon(26, "Raichu", PokeType::Electric);
+      if (InclusionFlag::ALOLAFORMS & inclusions) {
+         add_pokemon(26, "AlolanRaichu", PokeType::Electric, PokeType::Psychic);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
-         add_pokemon(27, "Snadshrew", PokeType::Ground);
+         add_pokemon(27, "Sandshrew", PokeType::Ground);
+         if (InclusionFlag::ALOLAFORMS & inclusions) {
+            add_pokemon(27, "AlolanSandshrew", PokeType::Ice, PokeType::Steel);
+         }
       }
       add_pokemon(28, "Sandlash", PokeType::Ground);
+      if (InclusionFlag::ALOLAFORMS & inclusions) {
+         add_pokemon(28, "AlolanSandslash", PokeType::Ice, PokeType::Steel);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(29, "Nidoranf_f", PokeType::Poison);
          add_pokemon(30, "Nidorina", PokeType::Poison);
@@ -106,8 +137,14 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       add_pokemon(36, "Clefable", PokeType::Fairy);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(37, "Vulpix", PokeType::Fire);
+         if (InclusionFlag::ALOLAFORMS & inclusions) {
+            add_pokemon(37, "AlolanVulpix", PokeType::Ice);
+         }
       }
       add_pokemon(38, "Ninetales", PokeType::Fire);
+      if (InclusionFlag::ALOLAFORMS & inclusions) {
+         add_pokemon(38, "AlolanNinetales", PokeType::Ice, PokeType::Fairy);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(39, "Jigglypuff", PokeType::Normal, PokeType::Fairy);
       }
@@ -133,12 +170,24 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       add_pokemon(49, "Venomoth", PokeType::Bug, PokeType::Poison);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(50, "Diglett", PokeType::Ground);
+         if (InclusionFlag::ALOLAFORMS & inclusions) {
+            add_pokemon(50, "AlolanDiglett", PokeType::Ground, PokeType::Steel);
+         }
       }
       add_pokemon(51, "Dugtrio", PokeType::Ground);
+      if (InclusionFlag::ALOLAFORMS & inclusions) {
+         add_pokemon(51, "AlolanDugtrio", PokeType::Ground, PokeType::Steel);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(52, "Meowth", PokeType::Normal);
+         if (InclusionFlag::ALOLAFORMS & inclusions) {
+            add_pokemon(52, "AlolanMeowth", PokeType::Dark);
+         }
       }
       add_pokemon(53, "Persian", PokeType::Normal);
+      if (InclusionFlag::ALOLAFORMS & inclusions) {
+         add_pokemon(53, "AlolanPersian", PokeType::Dark);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(54, "Psyduck", PokeType::Water);
       }
@@ -161,6 +210,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(64, "Kadabra", PokeType::Psychic);
       }
       add_pokemon(65, "Alakazam", PokeType::Psychic);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(65, "MegaAlakazam", PokeType::Psychic);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(66, "Machop", PokeType::Fighting);
          add_pokemon(67, "Machoke", PokeType::Fighting);
@@ -177,9 +229,18 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       add_pokemon(73, "Tentacruel", PokeType::Water, PokeType::Poison);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(74, "Geodude", PokeType::Rock, PokeType::Ground);
+         if (InclusionFlag::ALOLAFORMS & inclusions) {
+            add_pokemon(74, "AlolanGeodude", PokeType::Rock, PokeType::Electric);
+         }
          add_pokemon(75, "Graveler", PokeType::Rock, PokeType::Ground);
+         if (InclusionFlag::ALOLAFORMS & inclusions) {
+            add_pokemon(75, "AlolanGraveler", PokeType::Rock, PokeType::Electric);
+         }
       }
       add_pokemon(76, "Golem", PokeType::Rock, PokeType::Ground);
+      if (InclusionFlag::ALOLAFORMS & inclusions) {
+         add_pokemon(76, "AlolanGolem", PokeType::Rock, PokeType::Electric);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(77, "Ponyta", PokeType::Fire);
       }
@@ -188,6 +249,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(79, "Slopoke", PokeType::Water, PokeType::Psychic);
       }
       add_pokemon(80, "Slowbro", PokeType::Water, PokeType::Psychic);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(80, "MegaSlowbro", PokeType::Water, PokeType::Psychic);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(81, "Magnemite", PokeType::Electric, PokeType::Steel);
       }
@@ -205,8 +269,14 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       add_pokemon(87, "Dwegong", PokeType::Water, PokeType::Ice);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(88, "Grimer", PokeType::Poison);
+         if (InclusionFlag::ALOLAFORMS & inclusions) {
+            add_pokemon(88, "AlolanGrimer", PokeType::Poison, PokeType::Dark);
+         }
       }
       add_pokemon(89, "Muk", PokeType::Poison);
+      if (InclusionFlag::ALOLAFORMS & inclusions) {
+         add_pokemon(89, "AlolanMuk", PokeType::Poison, PokeType::Dark);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(90, "Shellder", PokeType::Water);
       }
@@ -216,6 +286,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(93, "Haunter", PokeType::Ghost, PokeType::Poison);
       }
       add_pokemon(94, "Gengar", PokeType::Ghost, PokeType::Poison);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(94, "MegaGengar", PokeType::Ghost, PokeType::Poison);
+      }
       if ((InclusionFlag::PREEVOLUTIONS & inclusions) or not(RegionsFlag::JOHTO & regions)) {
          add_pokemon(95, "Onix", PokeType::Rock, PokeType::Ground);
       }
@@ -235,10 +308,16 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(102, "Exeggcute", PokeType::Grass, PokeType::Psychic);
       }
       add_pokemon(103, "Exeggutor", PokeType::Grass, PokeType::Psychic);
+      if (InclusionFlag::ALOLAFORMS & inclusions) {
+         add_pokemon(103, "AlolanExeggutor", PokeType::Grass, PokeType::Dragon);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(104, "Cubone", PokeType::Ground);
       }
       add_pokemon(105, "Marowak", PokeType::Ground);
+      if (InclusionFlag::ALOLAFORMS & inclusions) {
+         add_pokemon(105, "AlolanMarowak", PokeType::Fire, PokeType::Ghost);
+      }
       add_pokemon(106, "Hitmonlee", PokeType::Fighting);
       add_pokemon(107, "Hitmonchan", PokeType::Fighting);
       if ((InclusionFlag::PREEVOLUTIONS & inclusions) or not(RegionsFlag::SINNOH & regions)) {
@@ -261,6 +340,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(114, "Tangela", PokeType::Grass);
       }
       add_pokemon(115, "Kangaskhan", PokeType::Normal);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(115, "MegaKangakhan", PokeType::Normal);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(116, "Horsea", PokeType::Water);
       }
@@ -286,11 +368,17 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(126, "Magmar", PokeType::Fire);
       }
       add_pokemon(127, "Pinsir", PokeType::Bug);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(127, "MegaPinsir", PokeType::Bug, PokeType::Flying);
+      }
       add_pokemon(128, "Tauros", PokeType::Normal);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(129, "Magikarp", PokeType::Water);
       }
       add_pokemon(130, "Gyarados", PokeType::Water, PokeType::Flying);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(130, "MegaGyarados", PokeType::Water, PokeType::Dark);
+      }
       add_pokemon(131, "Lapras", PokeType::Water, PokeType::Ice);
       add_pokemon(132, "Ditto", PokeType::Normal);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
@@ -313,6 +401,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          }
          add_pokemon(141, "Kabutops", PokeType::Rock, PokeType::Water);
          add_pokemon(142, "Aerodactyl", PokeType::Rock, PokeType::Flying);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(142, "MegaAerodactyl", PokeType::Rock, PokeType::Flying);
+         }
       }
       add_pokemon(143, "Snorlax", PokeType::Normal);
       if (InclusionFlag::LEGENDARIES & inclusions) {
@@ -329,6 +420,10 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       }
       if (InclusionFlag::LEGENDARIES & inclusions) {
          add_pokemon(150, "MewTwo", PokeType::Psychic);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(150, "MegaMewTwoX", PokeType::Psychic, PokeType::Fighting);
+            add_pokemon(150, "MegaMewTwoY", PokeType::Psychic);
+         }
       }
       if (InclusionFlag::MYSTERIOUS & inclusions) {
          add_pokemon(151, "Mew", PokeType::Psychic);
@@ -394,6 +489,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(180, "Flaffa", PokeType::Electric);
       }
       add_pokemon(181, "Ampharos", PokeType::Electric);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(181, "MegaAmpharos", PokeType::Electric, PokeType::Dragon);
+      }
       add_pokemon(182, "Bellossom", PokeType::Grass);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(183, "Marill", PokeType::Water, PokeType::Fairy);
@@ -441,14 +539,23 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(207, "Gligar", PokeType::Ground, PokeType::Flying);
       }
       add_pokemon(208, "Steelix", PokeType::Steel, PokeType::Ground);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(208, "MegaSteelix", PokeType::Steel, PokeType::Fairy);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(209, "Snubbull", PokeType::Fairy);
       }
       add_pokemon(210, "Granbull", PokeType::Fairy);
       add_pokemon(211, "Qwilfish", PokeType::Water, PokeType::Poison);
       add_pokemon(212, "Scizor", PokeType::Bug, PokeType::Steel);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(212, "MegaScizor", PokeType::Bug, PokeType::Steel);
+      }
       add_pokemon(213, "Shuckle", PokeType::Bug, PokeType::Rock);
       add_pokemon(214, "Heracross", PokeType::Bug, PokeType::Fighting);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(214, "MegaHeracross", PokeType::Bug, PokeType::Fighting);
+      }
       if ((InclusionFlag::PREEVOLUTIONS & inclusions) or not(RegionsFlag::SINNOH & regions)) {
          add_pokemon(215, "Sneasel", PokeType::Dark, PokeType::Ice);
       }
@@ -478,6 +585,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(228, "Houndour", PokeType::Dark, PokeType::Fire);
       }
       add_pokemon(229, "Houndoom", PokeType::Dark, PokeType::Fire);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(229, "MegaHoundoom", PokeType::Dark, PokeType::Fire);
+      }
       add_pokemon(230, "Kingdra", PokeType::Water, PokeType::Dragon);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(231, "Phanpy", PokeType::Ground);
@@ -510,6 +620,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       }
       if (InclusionFlag::PSEUDOLEGENDARIES & inclusions) {
          add_pokemon(248, "Tyranitar", PokeType::Rock, PokeType::Dark);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(248, "MegaTyranitar", PokeType::Rock, PokeType::Dark);
+         }
       }
       if (InclusionFlag::LEGENDARIES & inclusions) {
          add_pokemon(249, "Lugia", PokeType::Psychic, PokeType::Flying);
@@ -527,16 +640,25 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
             add_pokemon(253, "Grovyle", PokeType::Grass);
          }
          add_pokemon(254, "Sceptile", PokeType::Grass);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(254, "MegaSceptile", PokeType::Grass, PokeType::Dragon);
+         }
          if (InclusionFlag::PREEVOLUTIONS & inclusions) {
             add_pokemon(255, "Torchic", PokeType::Fire);
             add_pokemon(256, "Combusken", PokeType::Fire, PokeType::Fighting);
          }
          add_pokemon(257, "Blanziken", PokeType::Fire, PokeType::Fighting);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(257, "MegaBlanziken", PokeType::Fire, PokeType::Fighting);
+         }
          if (InclusionFlag::PREEVOLUTIONS & inclusions) {
             add_pokemon(258, "Mudkip", PokeType::Water);
             add_pokemon(259, "Marshtomp", PokeType::Water, PokeType::Ground);
          }
          add_pokemon(260, "Swampert", PokeType::Water, PokeType::Ground);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(260, "MegaSwampert", PokeType::Water, PokeType::Ground);
+         }
       }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(261, "Poochyena", PokeType::Dark);
@@ -578,6 +700,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(281, "Kirlia", PokeType::Psychic, PokeType::Fairy);
       }
       add_pokemon(282, "Gardevoir", PokeType::Psychic, PokeType::Fairy);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(282, "MegaGardevoir", PokeType::Psychic, PokeType::Fairy);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(283, "Surskit", PokeType::Bug, PokeType::Water);
       }
@@ -616,20 +741,35 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       }
       add_pokemon(301, "Delcatty", PokeType::Normal);
       add_pokemon(302, "Sableye", PokeType::Dark, PokeType::Ghost);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(302, "MegaSableye", PokeType::Dark, PokeType::Ghost);
+      }
       add_pokemon(303, "Mawile", PokeType::Steel, PokeType::Fairy);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(303, "MegaMawile", PokeType::Steel, PokeType::Fairy);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(304, "Aron", PokeType::Steel, PokeType::Rock);
-         add_pokemon(305, "Aggron", PokeType::Steel, PokeType::Rock);
+         add_pokemon(305, "Lairon", PokeType::Steel, PokeType::Rock);
       }
       add_pokemon(306, "Aggron", PokeType::Steel, PokeType::Rock);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(306, "MegaAggron", PokeType::Steel);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(307, "Meditite", PokeType::Fighting, PokeType::Psychic);
       }
       add_pokemon(308, "Medicham", PokeType::Fighting, PokeType::Psychic);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(308, "MegaMedicham", PokeType::Fighting, PokeType::Psychic);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(309, "Electrike", PokeType::Electric);
       }
       add_pokemon(310, "Manectric", PokeType::Electric);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(310, "MegaManectirc", PokeType::Electric);
+      }
       add_pokemon(311, "Pluse", PokeType::Electric);
       add_pokemon(312, "Minun", PokeType::Electric);
       add_pokemon(313, "Volbeat", PokeType::Bug);
@@ -645,6 +785,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(318, "Carvanha", PokeType::Water, PokeType::Dark);
       }
       add_pokemon(319, "Sharpedo", PokeType::Water, PokeType::Dark);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(319, "MegaSharpedo", PokeType::Water, PokeType::Dark);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(320, "Wailmer", PokeType::Water);
       }
@@ -653,6 +796,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(322, "Numel", PokeType::Fire, PokeType::Ground);
       }
       add_pokemon(323, "Camerupt", PokeType::Fire, PokeType::Ground);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(323, "MegaCamerupt", PokeType::Fire, PokeType::Ground);
+      }
       add_pokemon(324, "Torkoal", PokeType::Fire);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(325, "Spoink", PokeType::Psychic);
@@ -672,6 +818,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(333, "Swablu", PokeType::Normal, PokeType::Flying);
       }
       add_pokemon(334, "Altaria", PokeType::Dragon, PokeType::Flying);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(334, "MegaAltaria", PokeType::Dragon, PokeType::Fairy);
+      }
       add_pokemon(335, "Zangoose", PokeType::Normal);
       add_pokemon(336, "Seviper", PokeType::Poison);
       add_pokemon(337, "Lunatone", PokeType::Rock, PokeType::Psychic);
@@ -708,6 +857,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(353, "Shuppet", PokeType::Ghost);
       }
       add_pokemon(354, "Banette", PokeType::Ghost);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(354, "MegaBanette", PokeType::Ghost);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(355, "Duskull", PokeType::Ghost);
       }
@@ -717,11 +869,17 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       add_pokemon(357, "Tropius", PokeType::Grass, PokeType::Flying);
       add_pokemon(358, "Chimecho", PokeType::Psychic);
       add_pokemon(359, "Absol", PokeType::Dark);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(359, "MegaAbsol", PokeType::Dark);
+      }
       add_pokemon(360, "Wynaut", PokeType::Psychic);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(361, "Snorunt", PokeType::Ice);
       }
       add_pokemon(362, "Glalie", PokeType::Ice);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(362, "MegaGlaliie", PokeType::Ice);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(363, "Spheal", PokeType::Ice, PokeType::Water);
          add_pokemon(364, "Sealeo", PokeType::Ice, PokeType::Water);
@@ -740,6 +898,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       }
       if (InclusionFlag::PSEUDOLEGENDARIES & inclusions) {
          add_pokemon(373, "Salamence", PokeType::Dragon, PokeType::Flying);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(373, "MegaSalamence", PokeType::Dragon, PokeType::Flying);
+         }
       }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(374, "Beldum", PokeType::Steel, PokeType::Psychic);
@@ -747,16 +908,30 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       }
       if (InclusionFlag::PSEUDOLEGENDARIES & inclusions) {
          add_pokemon(376, "Metagross", PokeType::Steel, PokeType::Psychic);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(376, "MegaMetagross", PokeType::Steel, PokeType::Psychic);
+         }
       }
       if (InclusionFlag::LEGENDARIES & inclusions) {
          add_pokemon(377, "Regirock", PokeType::Rock);
          add_pokemon(378, "Regice", PokeType::Ice);
          add_pokemon(379, "Registeel", PokeType::Steel);
          add_pokemon(380, "Latias", PokeType::Dragon, PokeType::Psychic);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(380, "MegaLatias", PokeType::Dragon, PokeType::Psychic);
+         }
          add_pokemon(381, "Latios", PokeType::Dragon, PokeType::Psychic);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(381, "MegaLatios", PokeType::Dragon, PokeType::Psychic);
+         }
          add_pokemon(382, "Kyogre", PokeType::Water);
+         add_pokemon(382, "PrimalKyogre", PokeType::Water);
          add_pokemon(383, "Groudon", PokeType::Ground);
+         add_pokemon(383, "PrimalGroudon", PokeType::Ground, PokeType::Fire);
          add_pokemon(384, "Rayquaza", PokeType::Dragon, PokeType::Flying);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(384, "MegaRayquaza", PokeType::Dragon, PokeType::Flying);
+         }
       }
       if (InclusionFlag::MYSTERIOUS & inclusions) {
          add_pokemon(385, "Jirachi", PokeType::Steel, PokeType::Psychic);
@@ -847,6 +1022,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(427, "Buneary", PokeType::Normal);
       }
       add_pokemon(428, "Lopunny", PokeType::Normal, PokeType::Fighting);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(428, "MegaLopunny", PokeType::Normal, PokeType::Fighting);
+      }
       add_pokemon(429, "Mismagius", PokeType::Ghost);
       add_pokemon(430, "Honchkrow", PokeType::Dark, PokeType::Flying);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
@@ -880,6 +1058,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       }
       if (InclusionFlag::PSEUDOLEGENDARIES & inclusions) {
          add_pokemon(445, "Garchomp", PokeType::Dragon, PokeType::Ground);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(445, "MegaGarchomp", PokeType::Dragon, PokeType::Ground);
+         }
       }
       if ((InclusionFlag::PREEVOLUTIONS & inclusions) or not(RegionsFlag::KANTO & regions)) {
          add_pokemon(446, "Munchlax", PokeType::Normal);
@@ -888,6 +1069,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(447, "Riolu", PokeType::Fighting);
       }
       add_pokemon(448, "Lucario", PokeType::Fighting, PokeType::Steel);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(448, "MegaLucario", PokeType::Fighting, PokeType::Steel);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(449, "Hippopotas", PokeType::Ground);
       }
@@ -912,6 +1096,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
          add_pokemon(459, "Snover", PokeType::Water, PokeType::Ice);
       }
       add_pokemon(460, "Abomasnow", PokeType::Grass, PokeType::Ice);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(460, "MegaAbomasnow", PokeType::Grass, PokeType::Ice);
+      }
       add_pokemon(461, "Weavile", PokeType::Dark, PokeType::Ice);
       add_pokemon(462, "Magnezone", PokeType::Electric, PokeType::Steel);
       add_pokemon(463, "Lickilicky", PokeType::Normal);
@@ -927,6 +1114,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       add_pokemon(473, "Mamoswine", PokeType::Ice, PokeType::Ground);
       add_pokemon(474, "Porygon-Z", PokeType::Normal);
       add_pokemon(475, "Gallade", PokeType::Psychic, PokeType::Fighting);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(475, "MegaGallade", PokeType::Psychic, PokeType::Fighting);
+      }
       add_pokemon(476, "Probopass", PokeType::Rock, PokeType::Steel);
       add_pokemon(477, "Dusknoir", PokeType::Ghost);
       add_pokemon(478, "Froslass", PokeType::Ice, PokeType::Ghost);
@@ -1047,7 +1237,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       }
       add_pokemon(530, "Excadrill", PokeType::Ground, PokeType::Steel);
       add_pokemon(531, "Audino", PokeType::Normal);
-      add_pokemon(531, "Audino_fairy", PokeType::Normal, PokeType::Fairy);
+      if (InclusionFlag::MEGAS & inclusions) {
+         add_pokemon(531, "MegaAudino", PokeType::Normal, PokeType::Fairy);
+      }
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(532, "Timburr", PokeType::Fighting);
          add_pokemon(533, "Gurdurr", PokeType::Fighting);
@@ -1390,6 +1582,9 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       }
       if (InclusionFlag::MYSTERIOUS & inclusions) {
          add_pokemon(719, "Diancie", PokeType::Rock, PokeType::Fairy);
+         if (InclusionFlag::MEGAS & inclusions) {
+            add_pokemon(719, "MegaDiancie", PokeType::Rock, PokeType::Fairy);
+         }
          add_pokemon(720, "Hoopa_confined", PokeType::Psychic, PokeType::Ghost);
          add_pokemon(720, "Hoopa_unbound", PokeType::Psychic, PokeType::Dark);
          add_pokemon(721, "Volcanion", PokeType::Fire, PokeType::Water);
