@@ -105,6 +105,8 @@ private:
 
 bool operator<(const PokeTeam &lhs, const PokeTeam &rhs);
 
+bool operator>(const PokeTeam &lhs, const PokeTeam &rhs);
+
 std::ostream &operator<<(std::ostream &os, const PokeTeam &pt);
 
 #endif //POKEMON_TEAM_POKEMON_H

@@ -153,7 +153,7 @@ void Pokedex::make(unsigned regions, unsigned inclusions) {
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(39, 270, "Jigglypuff", PokeType::Normal, PokeType::Fairy);
       }
-      add_pokemon(40, 435, "Wiglytuff", PokeType::Normal, PokeType::Fairy);
+      add_pokemon(40, 435, "Wigglytuff", PokeType::Normal, PokeType::Fairy);
       if (InclusionFlag::PREEVOLUTIONS & inclusions) {
          add_pokemon(41, 245, "Zubat", PokeType::Poison, PokeType::Flying);
       }

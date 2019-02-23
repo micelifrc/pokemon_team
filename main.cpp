@@ -9,7 +9,11 @@ int main() {
    // set the following parameters
    std::vector<Pokemon> fixed_pokemon{};
    std::vector<PokeTeam> best_teams;
-   int best_score = FindBestTeam(fixed_pokemon, best_teams).find_best_teams();
+   unsigned regions = RegionsFlag::KANTO | RegionsFlag::JOHTO | RegionsFlag::HOENN;
+   unsigned inclusions = InclusionFlag::PREEVOLUTIONS | InclusionFlag::PSEUDOLEGENDARIES | InclusionFlag::FOSSILS |
+                         InclusionFlag::STARTERS;
+
+   int best_score = FindBestTeam(fixed_pokemon, best_teams, regions, inclusions).find_best_teams();
 
    std::cout << "This is a list of the best teams:\n\n";
    for (const auto &team: best_teams) {
