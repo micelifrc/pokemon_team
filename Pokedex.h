@@ -44,6 +44,8 @@ public:
 
    const std::vector<const Pokemon *> &representatives() const { return _representatives; }
 
+   const unsigned long num_representatives() const { return _representatives.size(); }
+
 private:
    template<typename... Args>
    void add_pokemon(Args... args);

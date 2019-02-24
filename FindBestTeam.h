@@ -27,31 +27,49 @@ public:
                 unsigned inclusions_ = InclusionFlag::STARTERS | InclusionFlag::FOSSILS |
                                        InclusionFlag::PSEUDOLEGENDARIES | InclusionFlag::ALOLAFORMS |
                                        InclusionFlag::PREEVOLUTIONS,
-                bool consider_defence_ = true,
-                bool consider_offence_ = false, int filter_factor_ = 1, bool allow_type_repetitions_ = true);
+                bool consider_defence_ = true, bool consider_offence_ = false, int filter_factor_ = 1);
 
    // Will find the best possible team, for the first _num_fixed_pokemon already fixed in _current_team
    int find_best_teams();
 
 private:
-   void set_max_possible_increment();
+   // The exponential function on integers (for some reason I only find it with double exponent in std, so I think this is faster)
+   static unsigned long integer_exponential(unsigned long base, unsigned exponent) {
+      return (exponent == 0) ? 1 : base * integer_exponential(base, exponent - 1);
+   }
 
-   // The scoring for the first @p idx pokemon
-   int compute_scoring(unsigned idx);
+   // the SubTeam struct represents a team of 3 pokemon only
+   // the team will contain pokemon in _pokedex._representatives[idx] for idx in members
+   struct SubTeam {
+      static const unsigned SIZE = 3;
+      std::array<unsigned long, SIZE> members_idx;
+      int upper_bd;   // an upper bound to the value of the SubTeam
+      std::array<int, Pokemon::NUM_TYPES> all_matchups;  // the precise values for all the matchups
 
-   // The main looping procedure for operator()
-   void find_best_team_loop_iter(unsigned already_in_team, unsigned long next_to_try);
+      SubTeam(const std::array<unsigned long, SIZE> &members_,
+              const std::array<int, Pokemon::NUM_TYPES> &all_matchups_);
 
-   unsigned _num_fixed_pokemon;  // the number of pokemon we specify from constructor
+      unsigned long operator[](unsigned idx) const;
+   };
+
+   // creates all possible subteams containing the fixed_pokemon with required_index parity
+   void form_all_subteams(unsigned subteam_idx);
+
+   // The loop part of the function form_all_subteams
+   void form_all_subteams_iteration(unsigned subteam_idx, unsigned new_member_position);
+
+   // merges the two teams represented in the arrays _all_subteams to form 6-pokemon teams
+   void merge_best_subteams();
+
+   std::vector<Pokemon> _fixed_pokemon;  // the number of pokemon we specify from constructor
    std::vector<PokeTeam> &_best_teams;  // the list of all best teams found
    int _max_score;  // the max score found in the computation
    std::function<int(const Pokemon *, PokeType)> _evaluation;  // the function to compute which team is the best
    int _filter_factor;  // A number to adjust the computation (if 0, we only consider the bad match-ups, this is weak)
-   PokeTeam _current_team;  // the team we are currently testing
-   std::array<std::array<int, Pokemon::NUM_TYPES>, 6> _partial_scoring;  // The partial scoring for the team
    Pokedex _pokedex;  // The pokedex where to search the other pokemon for the team
-   bool _allow_type_repetitions;
-   int _max_possible_increment;  // The maximum increment for 1 addition of a pokemon, used to speed up the search
+   std::array<std::vector<SubTeam>, 2> _all_subteams;  // All the possible subteams (we use also the second only if there are some specified pokemon)
+   std::array<std::array<int, Pokemon::NUM_TYPES>, SubTeam::SIZE> _partial_matchups;
+   std::array<unsigned long, SubTeam::SIZE> _members_subteam;
 };
 
 
