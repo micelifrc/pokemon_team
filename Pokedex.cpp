@@ -1616,7 +1616,7 @@ void Pokedex::make(unsigned regions, unsigned tipologies) {
             add_pokemon(728, 320, "Popplio", PokeType::Water);
             add_pokemon(729, 420, "Brionne", PokeType::Water);
          }
-         add_pokemon(730, 530, "Primatina", PokeType::Water, PokeType::Fairy);
+         add_pokemon(730, 530, "Primarina", PokeType::Water, PokeType::Fairy);
       }
       if (TipologyFlag::PREEVOLUTIONS & tipologies) {
          add_pokemon(731, 265, "Pikipek", PokeType::Normal, PokeType::Flying);

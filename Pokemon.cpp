@@ -11,8 +11,8 @@ int Pokemon::resistance(PokeType enemy_type) const {
 }
 
 int Pokemon::offensive_effectiveness(PokeType enemy_type) const {
-   return std::max(-1, static_cast<int>(std::max(effectiveness(_types.first, enemy_type),
-                                                 effectiveness(_types.second, enemy_type))));
+   return std::max(std::max(static_cast<int>(effectiveness(_types.first, enemy_type)),
+                            static_cast<int>(effectiveness(_types.second, enemy_type))), -2);
 }
 
 int Pokemon::mismatch(PokeType enemy_type) const {
@@ -185,6 +185,7 @@ Pokemon::Effectiveness Pokemon::effectiveness(PokeType atk, PokeType def) {
             case PokeType::Steel:
             case PokeType::Fire:
             case PokeType::Water:
+            case PokeType::Ice:
                return Effectiveness::NonVeryEffective;
             default:
                return Effectiveness::Effective;
@@ -269,6 +270,8 @@ Pokemon::Effectiveness Pokemon::effectiveness(PokeType atk, PokeType def) {
             case PokeType::Ghost:
             case PokeType::Dark:
                return Effectiveness::NonVeryEffective;
+            case PokeType::Psychic:
+               return Effectiveness::Ineffective;
             default:
                return Effectiveness::Effective;
          }
