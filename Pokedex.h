@@ -70,33 +70,25 @@ private:
 template<typename... Args>
 void Pokedex::add_pokemon(Args... args) {
    Pokemon poke{args...};
-   if(poke.types().first == PokeType::Nothing) {
-      throw std::logic_error("The pokedex cannot add a pokemon without a first type");
-   }
-   PokeType second_type = (poke.types().second == PokeType::Nothing) ? poke.types().first
-                                                                               : poke.types().second;
-   for (const auto &similar_poke: *_matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]) {
+   for (const auto &similar_poke: *_matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(poke.types().second)]) {
       if (similar_poke == poke) {
          return;
       }
    }
-   _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]->emplace_back(poke);
+   _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(poke.types().second)]->emplace_back(poke);
 }
 
 template<typename... Args>
 void Pokedex::remove_pokemon(Args... args) {
    Pokemon poke{args...};
-   if(poke.types().first == PokeType::Nothing) {
-      return;
-   }
-   PokeType second_type = (poke.types().second == PokeType::Nothing) ? poke.types().first
-                                                                               : poke.types().second;
    unsigned idx = 0;
-   while (idx != _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]->size()) {
-      if ((*_matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)])[idx] == poke) {
-         (*_matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)])[idx] =
-               _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]->back();
-         _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(second_type)]->pop_back();
+   while (idx !=
+          _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(poke.types().second)]->size()) {
+      if ((*_matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(poke.types().second)])[idx] ==
+          poke) {
+         (*_matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(poke.types().second)])[idx] =
+               _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(poke.types().second)]->back();
+         _matrix[static_cast<unsigned>(poke.types().first)][static_cast<unsigned>(poke.types().second)]->pop_back();
       } else {
          ++idx;
       }

@@ -5,8 +5,9 @@
 #include "Pokemon.h"
 
 int Pokemon::resistance(PokeType enemy_type) const {
-   return std::min(2, -static_cast<int>(effectiveness(enemy_type, _types.first)) -
-                      static_cast<int>(effectiveness(enemy_type, _types.second)));
+   return (_types.first == _types.second) ? std::min(-static_cast<int>(effectiveness(enemy_type, _types.first)), 1)
+                                          : std::min(-static_cast<int>(effectiveness(enemy_type, _types.first)) -
+                                                     static_cast<int>(effectiveness(enemy_type, _types.second)), 2);
 }
 
 int Pokemon::offensive_effectiveness(PokeType enemy_type) const {
@@ -287,19 +288,16 @@ Pokemon::Effectiveness Pokemon::effectiveness(PokeType atk, PokeType def) {
                return Effectiveness::Effective;
          }
       }
-      default:
-         return Effectiveness::Effective;
    }
 }
 
 bool share_type(const Pokemon &lhs, const Pokemon &rhs) {
    return lhs.types().first == rhs.types().first or lhs.types().first == rhs.types().second or
-          lhs.types().second == rhs.types().first or
-          (lhs.types().second == rhs.types().second and lhs.types().second != PokeType::Nothing);
+          lhs.types().second == rhs.types().first or lhs.types().second == rhs.types().second;
 }
 
 bool operator==(const Pokemon &lhs, const Pokemon &rhs) {
-   return lhs.id() == rhs.id();
+   return lhs.id() == rhs.id() and lhs.name() == rhs.name();
 }
 
 bool operator!=(const Pokemon &lhs, const Pokemon &rhs) {

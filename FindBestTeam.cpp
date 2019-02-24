@@ -10,6 +10,7 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
                            bool consider_offence_, int filter_factor_) :
       _fixed_pokemon{fixed_pokemon_}, _best_teams{best_teams_}, _max_score{std::numeric_limits<int>::min()},
       _filter_factor{filter_factor_}, _subteams{_all_subteams[0], _all_subteams[1]} {
+
    if (_fixed_pokemon.size() > PokeTeam::SIZE) {
       throw std::invalid_argument(
             "Cannot complete at team that already has more than " + std::to_string(PokeTeam::SIZE) + " pokemon");

@@ -29,8 +29,7 @@ enum struct PokeType : unsigned {
    Ice = 14,
    Dragon = 15,
    Dark = 16,
-   Fairy = 17,
-   Nothing = 18
+   Fairy = 17
 };
 
 class Pokemon {
@@ -44,10 +43,13 @@ public:
       Ineffective = -10
    };
 
-   explicit Pokemon(int id_ = 0, int total_stats_ = 0, std::string name_ = "", PokeType type1 = PokeType::Nothing,
-                    PokeType type2 = PokeType::Nothing) :
+   Pokemon(int id_, int total_stats_, std::string name_, PokeType type1, PokeType type2) :
          _id{static_cast<unsigned>(id_)}, _total_stats{static_cast<unsigned>(total_stats_)}, _name{std::move(name_)},
          _types{type1, type2} {}
+
+   explicit Pokemon(int id_ = 0, int total_stats_ = 0, std::string name_ = "", PokeType type1 = PokeType::Normal) :
+         _id{static_cast<unsigned>(id_)}, _total_stats{static_cast<unsigned>(total_stats_)}, _name{std::move(name_)},
+         _types{type1, type1} {}
 
    // Positive if the pokemon has good resistance, negative if the pokemon has bad resistance
    int resistance(PokeType enemy_type) const;
