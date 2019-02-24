@@ -19,7 +19,7 @@ struct RegionsFlag {
    };
 };
 
-struct InclusionFlag {
+struct TipologyFlag {
    enum Values : unsigned {
       STARTERS = 0x0001,
       FOSSILS = 0x0002,
@@ -40,7 +40,7 @@ public:
    Pokedex() : _matrix{std::move(create_type_pair_matrix())} {}
 
    // Takes in input two flags, formed from RegionsFlag and InclusionFlag respectively
-   void make(unsigned regions, unsigned inclusions);
+   void make(unsigned regions, unsigned tipologies);
 
    const std::vector<const Pokemon *> &representatives() const { return _representatives; }
 

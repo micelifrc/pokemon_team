@@ -3,4 +3,8 @@ project(pokemon_team)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(pokemon_team main.cpp FindBestTeam.cpp Pokedex.cpp Pokemon.cpp)
+set(CMAKE_CXX_FLAGS -pthread)
+
+set(SOURCE_FILES main.cpp FindBestTeam.cpp Pokedex.cpp Pokemon.cpp)
+
+add_executable(pokemon_team ${SOURCE_FILES})

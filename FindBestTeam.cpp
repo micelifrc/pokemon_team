@@ -3,9 +3,10 @@
 //
 
 #include "FindBestTeam.h"
+#include <thread>
 
 FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
-                           unsigned regions_, unsigned inclusions_, bool consider_defence_,
+                           unsigned regions_, unsigned tipology_, bool consider_defence_,
                            bool consider_offence_, int filter_factor_) :
       _fixed_pokemon{fixed_pokemon_}, _best_teams{best_teams_}, _max_score{std::numeric_limits<int>::min()},
       _filter_factor{filter_factor_}, _subteams{_all_subteams[0], _all_subteams[1]} {
@@ -25,7 +26,7 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
    } else {
       _evaluation = &Pokemon::offensive_effectiveness;
    }
-   _pokedex.make(regions_, inclusions_);
+   _pokedex.make(regions_, tipology_);
 
    _all_subteams[0].reserve(integer_exponential(_pokedex.num_representatives(),
                                                 static_cast<unsigned>(SubTeam::SIZE -
@@ -34,7 +35,7 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
                                                 static_cast<unsigned>(SubTeam::SIZE - _fixed_pokemon.size() / 2)));
 }
 
-int FindBestTeam::find_best_teams() {
+int FindBestTeam::find_best_teams(unsigned num_threads) {
    form_all_subteams(0);
    std::sort(_all_subteams[0].begin(), _all_subteams[0].end(),
              [](const SubTeam &lhs, const SubTeam &rhs) { return lhs.upper_bd > rhs.upper_bd; });
@@ -44,7 +45,7 @@ int FindBestTeam::find_best_teams() {
                 [](const SubTeam &lhs, const SubTeam &rhs) { return lhs.upper_bd > rhs.upper_bd; });
    }
 
-   merge_best_subteams();
+   merge_best_subteams(num_threads);
    std::sort(_best_teams.begin(), _best_teams.end(),
              [](const PokeTeam &lhs, const PokeTeam &rhs) { return lhs > rhs; });
 
@@ -78,7 +79,7 @@ void FindBestTeam::form_all_subteams_iteration(unsigned subteam_idx, unsigned ne
    if (new_member_position >= SubTeam::SIZE) {
       _all_subteams[subteam_idx].emplace_back(_members_subteam, _partial_matchups[SubTeam::SIZE - 1]);
    } else {
-      for (unsigned long new_member_idx = (new_member_position == 0) ? 0 : _members_subteam[new_member_position - 1];
+      for (unsigned new_member_idx = (new_member_position == 0) ? 0 : _members_subteam[new_member_position - 1];
            new_member_idx != _pokedex.num_representatives(); ++new_member_idx) {
          _members_subteam[new_member_position] = new_member_idx;
          for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
@@ -93,37 +94,57 @@ void FindBestTeam::form_all_subteams_iteration(unsigned subteam_idx, unsigned ne
    }
 }
 
-void FindBestTeam::merge_best_subteams() {
+void FindBestTeam::merge_best_subteams(unsigned num_threads) {
    _subteams.first = _all_subteams[0];
    _subteams.second = _fixed_pokemon.empty() ? _all_subteams[0] : _all_subteams[1];
 
-   for (unsigned long idx_first = 0; idx_first != _subteams.first.size(); ++idx_first) {
-      merge_best_subteams_iteration(idx_first);
+   if (_subteams.first.size() < num_threads) {
+      num_threads = static_cast<unsigned>(_subteams.first.size());
+   }
+   std::vector<std::thread> threads;
+   threads.reserve(num_threads);
+
+   _next_idx_first_to_consider = 0;
+   for (unsigned thread_idx = 0; thread_idx != num_threads; ++thread_idx) {
+      threads.emplace_back(&FindBestTeam::merge_best_subteams_iteration, this);
+   }
+   for (auto &thread: threads) {
+      thread.join();
    }
 
    save_best_teams();
 }
 
-void FindBestTeam::merge_best_subteams_iteration(unsigned long idx_first) {
-   for (unsigned long idx_second = 0; idx_second != _subteams.second.size(); ++idx_second) {
-      if (_subteams.first[idx_first].upper_bd + _subteams.second[idx_second].upper_bd < _max_score) {
-         break;
-      }
-      if (_subteams.first[idx_first][SubTeam::SIZE - 1] > _subteams.second[idx_second][_fixed_pokemon.size() / 2]) {
-         continue;  // we want the team to be in increasing order of indices
-      }
-      int pairing_scoring = 0;
-      for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
-         pairing_scoring += std::min(
-               _subteams.first[idx_first].all_matchups[type_idx] + _subteams.second[idx_second].all_matchups[type_idx],
-               _filter_factor);
-      }
-      if (pairing_scoring > _max_score) {
-         _max_score = pairing_scoring;
-         _best_pairings.clear();
-      }
-      if (pairing_scoring == _max_score) {
-         _best_pairings.emplace_back(idx_first, idx_second);
+void FindBestTeam::merge_best_subteams_iteration() {
+   unsigned long idx_first = 0;
+   while (idx_first < _subteams.first.size()) {
+      _next_idx_first_to_consider_lock.lock();
+      idx_first = _next_idx_first_to_consider++;
+      _next_idx_first_to_consider_lock.unlock();
+      for (unsigned long idx_second = 0; idx_second != _subteams.second.size(); ++idx_second) {
+         if (_subteams.first[idx_first].upper_bd + _subteams.second[idx_second].upper_bd < _max_score) {
+            break;
+         }
+         if (_subteams.first[idx_first][SubTeam::SIZE - 1] > _subteams.second[idx_second][_fixed_pokemon.size() / 2]) {
+            continue;  // we want the team to be in increasing order of indices
+         }
+         int pairing_scoring = 0;
+         for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
+            pairing_scoring += std::min(
+                  _subteams.first[idx_first].all_matchups[type_idx] +
+                  _subteams.second[idx_second].all_matchups[type_idx],
+                  _filter_factor);
+         }
+
+         _max_score_lock.lock();
+         if (pairing_scoring > _max_score) {
+            _max_score = pairing_scoring;
+            _best_pairings.clear();
+         }
+         if (pairing_scoring == _max_score) {
+            _best_pairings.emplace_back(idx_first, idx_second);
+         }
+         _max_score_lock.unlock();
       }
    }
 }
@@ -146,7 +167,7 @@ void FindBestTeam::save_best_teams() {
    }
 }
 
-FindBestTeam::SubTeam::SubTeam(const std::array<unsigned long, SIZE> &members_,
+FindBestTeam::SubTeam::SubTeam(const std::array<unsigned, SIZE> &members_,
                                const std::array<int, Pokemon::NUM_TYPES> &all_matchups_) :
       members_idx{members_}, upper_bd{0}, all_matchups{all_matchups_} {
    for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
