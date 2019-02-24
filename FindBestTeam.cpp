@@ -8,9 +8,10 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
                            unsigned regions_, unsigned inclusions_, bool consider_defence_,
                            bool consider_offence_, int filter_factor_) :
       _fixed_pokemon{fixed_pokemon_}, _best_teams{best_teams_}, _max_score{std::numeric_limits<int>::min()},
-      _filter_factor{filter_factor_} {
-   if (_fixed_pokemon.size() > 6) {
-      throw std::invalid_argument("Cannot complete at team that already has more than 6 pokemon");
+      _filter_factor{filter_factor_}, _subteams{_all_subteams[0], _all_subteams[1]} {
+   if (_fixed_pokemon.size() > PokeTeam::SIZE) {
+      throw std::invalid_argument(
+            "Cannot complete at team that already has more than " + std::to_string(PokeTeam::SIZE) + " pokemon");
    }
 
    if (not consider_defence_ and not consider_offence_) {
@@ -25,6 +26,7 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
       _evaluation = &Pokemon::offensive_effectiveness;
    }
    _pokedex.make(regions_, inclusions_);
+
    _all_subteams[0].reserve(integer_exponential(_pokedex.num_representatives(),
                                                 static_cast<unsigned>(SubTeam::SIZE -
                                                                       (_fixed_pokemon.size() + 1) / 2)));
@@ -92,49 +94,52 @@ void FindBestTeam::form_all_subteams_iteration(unsigned subteam_idx, unsigned ne
 }
 
 void FindBestTeam::merge_best_subteams() {
-   std::pair<std::vector<SubTeam> &, std::vector<SubTeam> &> subteams{_all_subteams[0], _all_subteams[1]};
-   if (_fixed_pokemon.empty()) {
-      subteams.second = _all_subteams[0];
-   }
-   unsigned front_free_index_in_first = static_cast<unsigned>(_fixed_pokemon.size() + 1) / 2;
-   unsigned front_free_index_in_second = static_cast<unsigned>(_fixed_pokemon.size()) / 2;
+   _subteams.first = _all_subteams[0];
+   _subteams.second = _fixed_pokemon.empty() ? _all_subteams[0] : _all_subteams[1];
 
-   std::vector<std::pair<unsigned long, unsigned long>> best_pairings;
-   for (unsigned long idx_first = 0; idx_first != subteams.first.size(); ++idx_first) {
-      for (unsigned long idx_second = 0; idx_second != subteams.second.size(); ++idx_second) {
-         if (static_cast<int>(subteams.first[idx_first].upper_bd + subteams.second[idx_second].upper_bd) < _max_score) {
-            break;
-         }
-         if (subteams.first[idx_first][SubTeam::SIZE - 1] > subteams.second[idx_second][front_free_index_in_second]) {
-            continue;  // we want the team to be in increasing order of indices
-         }
-         int pairing_scoring = 0;
-         for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
-            pairing_scoring += std::min(
-                  subteams.first[idx_first].all_matchups[type_idx] + subteams.second[idx_second].all_matchups[type_idx],
-                  _filter_factor);
-         }
-         if (pairing_scoring > _max_score) {
-            _max_score = pairing_scoring;
-            best_pairings.clear();
-         }
-         if (pairing_scoring == _max_score) {
-            best_pairings.emplace_back(idx_first, idx_second);
-         }
+   for (unsigned long idx_first = 0; idx_first != _subteams.first.size(); ++idx_first) {
+      merge_best_subteams_iteration(idx_first);
+   }
+
+   save_best_teams();
+}
+
+void FindBestTeam::merge_best_subteams_iteration(unsigned long idx_first) {
+   for (unsigned long idx_second = 0; idx_second != _subteams.second.size(); ++idx_second) {
+      if (_subteams.first[idx_first].upper_bd + _subteams.second[idx_second].upper_bd < _max_score) {
+         break;
+      }
+      if (_subteams.first[idx_first][SubTeam::SIZE - 1] > _subteams.second[idx_second][_fixed_pokemon.size() / 2]) {
+         continue;  // we want the team to be in increasing order of indices
+      }
+      int pairing_scoring = 0;
+      for (unsigned type_idx = 0; type_idx != Pokemon::NUM_TYPES; ++type_idx) {
+         pairing_scoring += std::min(
+               _subteams.first[idx_first].all_matchups[type_idx] + _subteams.second[idx_second].all_matchups[type_idx],
+               _filter_factor);
+      }
+      if (pairing_scoring > _max_score) {
+         _max_score = pairing_scoring;
+         _best_pairings.clear();
+      }
+      if (pairing_scoring == _max_score) {
+         _best_pairings.emplace_back(idx_first, idx_second);
       }
    }
+}
 
-   for (const auto &pairing: best_pairings) {
+void FindBestTeam::save_best_teams() {
+   for (const auto &pairing: _best_pairings) {
       PokeTeam best_team{};
-      for (unsigned poke_idx = 0; poke_idx != 6; ++poke_idx) {
+      for (unsigned poke_idx = 0; poke_idx != PokeTeam::SIZE; ++poke_idx) {
          if (poke_idx < _fixed_pokemon.size()) {
             best_team[poke_idx] = _fixed_pokemon[poke_idx];
-         } else if (poke_idx < SubTeam::SIZE + front_free_index_in_second) {
-            best_team[poke_idx] = *_pokedex.representatives()[subteams.first[pairing.first][poke_idx -
-                                                                                            front_free_index_in_first]];
+         } else if (poke_idx < SubTeam::SIZE + _fixed_pokemon.size() / 2) {
+            best_team[poke_idx] =
+                  *_pokedex.representatives()[_subteams.first[pairing.first][poke_idx - _fixed_pokemon.size() / 2]];
          } else {
-            best_team[poke_idx] = *_pokedex.representatives()[subteams.second[pairing.second][poke_idx -
-                                                                                              SubTeam::SIZE]];
+            best_team[poke_idx] =
+                  *_pokedex.representatives()[_subteams.second[pairing.second][poke_idx - SubTeam::SIZE]];
          }
       }
       _best_teams.emplace_back(best_team);

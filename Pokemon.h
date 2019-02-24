@@ -86,6 +86,8 @@ std::ostream &operator<<(std::ostream &os, const Pokemon &poke);
 
 class PokeTeam {
 public:
+   static const unsigned SIZE = 6;
+
    template<typename... Args>
    explicit
    PokeTeam() : _pokemon_list{Pokemon(), Pokemon(), Pokemon(), Pokemon(), Pokemon(), Pokemon()} {}
@@ -100,7 +102,7 @@ public:
    }
 
 private:
-   std::array<Pokemon, 6> _pokemon_list;
+   std::array<Pokemon, SIZE> _pokemon_list;
 };
 
 bool operator<(const PokeTeam &lhs, const PokeTeam &rhs);

@@ -311,8 +311,10 @@ std::ostream &operator<<(std::ostream &os, const Pokemon &poke) {
 }
 
 const Pokemon &PokeTeam::operator[](unsigned idx) const {
-   if (idx >= 6) {
-      throw std::out_of_range("Invalid call of operator[] for PokeTeam. There are only 6 pokemon in the team");
+   if (idx >= SIZE) {
+      throw std::out_of_range(
+            "Invalid call of operator[] for PokeTeam. There are only " + std::to_string(PokeTeam::SIZE) +
+            " pokemon in the team");
    }
    return _pokemon_list[idx];
 }
@@ -331,7 +333,7 @@ bool operator>(const PokeTeam &lhs, const PokeTeam &rhs) {
 
 std::ostream &operator<<(std::ostream &os, const PokeTeam &pt) {
    os << '[' << pt[0];
-   for (unsigned idx = 1; idx != 6; ++idx) {
+   for (unsigned idx = 1; idx != PokeTeam::SIZE; ++idx) {
       os << ", " << pt[idx];
    }
    return os << "] = " << pt.sum_stats();

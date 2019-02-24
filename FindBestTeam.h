@@ -61,6 +61,11 @@ private:
    // merges the two teams represented in the arrays _all_subteams to form 6-pokemon teams
    void merge_best_subteams();
 
+   // one iteration of the merge_best_subteams() procedure
+   void merge_best_subteams_iteration(unsigned long idx_first);
+
+   void save_best_teams();
+
    std::vector<Pokemon> _fixed_pokemon;  // the number of pokemon we specify from constructor
    std::vector<PokeTeam> &_best_teams;  // the list of all best teams found
    int _max_score;  // the max score found in the computation
@@ -70,6 +75,8 @@ private:
    std::array<std::vector<SubTeam>, 2> _all_subteams;  // All the possible subteams (we use also the second only if there are some specified pokemon)
    std::array<std::array<int, Pokemon::NUM_TYPES>, SubTeam::SIZE> _partial_matchups;
    std::array<unsigned long, SubTeam::SIZE> _members_subteam;
+   std::pair<std::vector<SubTeam> &, std::vector<SubTeam> &> _subteams;  // references to the two subteams
+   std::vector<std::pair<unsigned long, unsigned long>> _best_pairings;  // used during merge_best_subteams
 };
 
 
