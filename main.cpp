@@ -10,10 +10,10 @@ int main() {
    std::vector<Pokemon> fixed_pokemon{};
    std::vector<PokeTeam> best_teams;
    unsigned regions = RegionsFlag::KANTO | RegionsFlag::JOHTO | RegionsFlag::HOENN;
-   unsigned tipologies = TipologyFlag::PREEVOLUTIONS | TipologyFlag::PSEUDOLEGENDARIES | TipologyFlag::FOSSILS |
-                         TipologyFlag::STARTERS;
+   unsigned typologies = TypologyFlag::PREEVOLUTIONS | TypologyFlag::PSEUDOLEGENDARIES | TypologyFlag::FOSSILS |
+                         TypologyFlag::STARTERS;
 
-   int best_score = FindBestTeam(fixed_pokemon, best_teams, regions, tipologies).find_best_teams(4);
+   int best_score = FindBestTeam(fixed_pokemon, best_teams, regions, typologies).find_best_teams(4);
 
    std::cout << "This is a list of the best teams:\n\n";
    for (const auto &team: best_teams) {

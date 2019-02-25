@@ -25,10 +25,11 @@ public:
    FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
                 unsigned regions_ = RegionsFlag::KANTO | RegionsFlag::JOHTO | RegionsFlag::HOENN | RegionsFlag::SINNOH |
                                     RegionsFlag::UNOVA | RegionsFlag::KALOS | RegionsFlag::ALOLA,
-                unsigned tipology_ = TipologyFlag::STARTERS | TipologyFlag::FOSSILS |
-                                     TipologyFlag::PSEUDOLEGENDARIES | TipologyFlag::ALOLAFORMS |
-                                     TipologyFlag::PREEVOLUTIONS,
-                bool consider_defence_ = true, bool consider_offence_ = false, int filter_factor_ = 1);
+                unsigned tipology_ = TypologyFlag::STARTERS | TypologyFlag::FOSSILS |
+                                     TypologyFlag::PSEUDOLEGENDARIES | TypologyFlag::ALOLAFORMS |
+                                     TypologyFlag::PREEVOLUTIONS,
+                bool consider_defence_ = true, bool consider_offence_ = false, int filter_factor_ = 1,
+                bool allow_repetitions_ = false);
 
    // Will find the best possible team, for the first _num_fixed_pokemon already fixed in _current_team
    int find_best_teams(unsigned num_threads = 1);
@@ -72,6 +73,7 @@ private:
    int _max_score;  // the max score found in the computation
    std::function<int(const Pokemon *, PokeType)> _evaluation;  // the function to compute which team is the best
    int _filter_factor;  // A number to adjust the computation (if 0, we only consider the bad match-ups, this is weak)
+   unsigned _repetition_step;
    Pokedex _pokedex;  // The pokedex where to search the other pokemon for the team
    std::array<std::shared_ptr<std::vector<SubTeam>>, 2> _all_subteams;  // All the possible subteams (we use also the second only if there are some specified pokemon)
    std::vector<std::pair<unsigned long, unsigned long>> _best_pairings;  // used during merge_best_subteams

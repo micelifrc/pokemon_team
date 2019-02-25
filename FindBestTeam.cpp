@@ -7,7 +7,7 @@
 
 FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
                            unsigned regions_, unsigned tipology_, bool consider_defence_,
-                           bool consider_offence_, int filter_factor_) :
+                           bool consider_offence_, int filter_factor_, bool allow_repetitions_) :
       _fixed_pokemon{fixed_pokemon_}, _best_teams{best_teams_}, _max_score{std::numeric_limits<int>::min()},
       _filter_factor{filter_factor_} {
 
@@ -20,6 +20,7 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
       throw std::invalid_argument("At least one between consider_defence and consider_offence should be set to true");
    }
 
+   _repetition_step = allow_repetitions_ ? 0 : 1;
    if (consider_defence_ and consider_offence_) {
       _evaluation = &Pokemon::mismatch;
    } else if (consider_defence_) {
@@ -83,7 +84,8 @@ void FindBestTeam::form_all_subteams_iteration(unsigned subteam_idx, unsigned ne
    if (new_member_position >= SubTeam::SIZE) {
       _all_subteams[subteam_idx]->emplace_back(_members_subteam, _partial_matchups[SubTeam::SIZE - 1]);
    } else {
-      for (unsigned new_member_idx = (new_member_position == 0) ? 0 : _members_subteam[new_member_position - 1];
+      for (unsigned new_member_idx = (new_member_position == 0) ? 0 : _members_subteam[new_member_position - 1] +
+                                                                      _repetition_step;
            new_member_idx != _pokedex.num_representatives(); ++new_member_idx) {
          _members_subteam[new_member_position] = new_member_idx;
          for (unsigned type_idx = 0; type_idx != static_cast<unsigned>(PokeType::NUM_TYPES); ++type_idx) {

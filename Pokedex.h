@@ -19,7 +19,7 @@ struct RegionsFlag {
    };
 };
 
-struct TipologyFlag {
+struct TypologyFlag {
    enum Values : unsigned {
       STARTERS = 0x0001,
       FOSSILS = 0x0002,
