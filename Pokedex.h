@@ -57,12 +57,12 @@ private:
    // @p _representatives will be wrong until you call extract_representatives again
    void extract_representatives();
 
-   static std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, Pokemon::NUM_TYPES>, Pokemon::NUM_TYPES>
+   static std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, static_cast<unsigned>(PokeType::NUM_TYPES)>, static_cast<unsigned>(PokeType::NUM_TYPES)>
    create_type_pair_matrix();
 
    // A matrix containing pointers to vectors containing all the pokemon for that pair of type in the pokedex
    // The order of the types is not relevant, and if a pokemon is single-type, it is in the diagonal of the matrix
-   std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, Pokemon::NUM_TYPES>, Pokemon::NUM_TYPES> _matrix;
+   std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, static_cast<unsigned>(PokeType::NUM_TYPES)>, static_cast<unsigned>(PokeType::NUM_TYPES)> _matrix;
    // One pokemon for each pair of types in the pokedex
    std::vector<const Pokemon *> _representatives;
 };

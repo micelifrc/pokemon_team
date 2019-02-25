@@ -29,23 +29,21 @@ enum struct PokeType : unsigned {
    Ice = 14,
    Dragon = 15,
    Dark = 16,
-   Fairy = 17
+   Fairy = 17,
+   NUM_TYPES = 18
 };
 
 class Pokemon {
 public:
-   static const unsigned NUM_TYPES = 18;
 
    enum struct Effectiveness : int {
-      Effective = 0,
-      Supereffective = 1,
-      NonVeryEffective = -1,
+      Regular = 0,
+      Super = 1,
+      NonVery = -1,
       Ineffective = -10
    };
 
-   Pokemon(int id_, int total_stats_, std::string name_, PokeType type1, PokeType type2) :
-         _id{static_cast<unsigned>(id_)}, _total_stats{static_cast<unsigned>(total_stats_)}, _name{std::move(name_)},
-         _types{type1, type2} {}
+   Pokemon(int id_, int total_stats_, std::string name_, PokeType type1, PokeType type2);
 
    explicit Pokemon(int id_ = 0, int total_stats_ = 0, std::string name_ = "", PokeType type1 = PokeType::Normal) :
          _id{static_cast<unsigned>(id_)}, _total_stats{static_cast<unsigned>(total_stats_)}, _name{std::move(name_)},
@@ -71,6 +69,8 @@ public:
 private:
    // tells if @p atk is effective against a pokemon of type @p def
    static Effectiveness effectiveness(PokeType atk, PokeType def);
+
+   static const std::array<std::array<Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>, static_cast<unsigned>(PokeType::NUM_TYPES)> _resistance_table;
 
    unsigned _id;
    unsigned _total_stats;  // the sum of the 6 stats of the pokemon

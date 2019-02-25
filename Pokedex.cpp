@@ -6,8 +6,8 @@
 
 void Pokedex::extract_representatives() {
    _representatives.clear();
-   for (unsigned x = 0; x != Pokemon::NUM_TYPES; ++x) {
-      for (unsigned y = x; y != Pokemon::NUM_TYPES; ++y) {
+   for (unsigned x = 0; x != static_cast<unsigned>(PokeType::NUM_TYPES); ++x) {
+      for (unsigned y = x; y != static_cast<unsigned>(PokeType::NUM_TYPES); ++y) {
          if (not _matrix[x][y]->empty()) {
             _representatives.emplace_back(&_matrix[x][y]->front());
             for (auto const &similar: *_matrix[x][y]) {
@@ -20,11 +20,11 @@ void Pokedex::extract_representatives() {
    }
 }
 
-std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, Pokemon::NUM_TYPES>, Pokemon::NUM_TYPES>
+std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, static_cast<unsigned>(PokeType::NUM_TYPES)>, static_cast<unsigned>(PokeType::NUM_TYPES)>
 Pokedex::create_type_pair_matrix() {
-   std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, Pokemon::NUM_TYPES>, Pokemon::NUM_TYPES> matrix;
-   for (unsigned x = 0; x != Pokemon::NUM_TYPES; ++x) {
-      for (unsigned y = 0; y != Pokemon::NUM_TYPES; ++y) {
+   std::array<std::array<std::shared_ptr<std::vector<Pokemon>>, static_cast<unsigned>(PokeType::NUM_TYPES)>, static_cast<unsigned>(PokeType::NUM_TYPES)> matrix;
+   for (unsigned x = 0; x != static_cast<unsigned>(PokeType::NUM_TYPES); ++x) {
+      for (unsigned y = 0; y != static_cast<unsigned>(PokeType::NUM_TYPES); ++y) {
          if (x <= y) {
             matrix[x][y] = std::make_shared<std::vector<Pokemon>>(std::vector<Pokemon>(0));
          } else {
@@ -36,8 +36,8 @@ Pokedex::create_type_pair_matrix() {
 }
 
 void Pokedex::make(unsigned regions, unsigned tipologies) {
-   for (unsigned x = 0; x != Pokemon::NUM_TYPES; ++x) {
-      for (unsigned y = 0; y != Pokemon::NUM_TYPES; ++y) {
+   for (unsigned x = 0; x != static_cast<unsigned>(PokeType::NUM_TYPES); ++x) {
+      for (unsigned y = 0; y != static_cast<unsigned>(PokeType::NUM_TYPES); ++y) {
          _matrix[x][y]->clear();
       }
    }

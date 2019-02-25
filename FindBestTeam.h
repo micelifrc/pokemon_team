@@ -45,9 +45,10 @@ private:
       static const unsigned SIZE = 3;
       std::array<unsigned, SIZE> members_idx;
       int upper_bd;   // an upper bound to the value of the SubTeam
-      std::array<int, Pokemon::NUM_TYPES> all_matchups;  // the precise values for all the matchups
+      std::array<int, static_cast<unsigned>(PokeType::NUM_TYPES)> all_matchups;  // the precise values for all the matchups
 
-      SubTeam(const std::array<unsigned, SIZE> &members_, const std::array<int, Pokemon::NUM_TYPES> &all_matchups_);
+      SubTeam(const std::array<unsigned, SIZE> &members_,
+              const std::array<int, static_cast<unsigned>(PokeType::NUM_TYPES)> &all_matchups_);
 
       unsigned long operator[](unsigned idx) const;
    };
@@ -66,17 +67,16 @@ private:
 
    void save_best_teams();
 
-   std::vector<Pokemon> _fixed_pokemon;  // the number of pokemon we specify from constructor
+   std::vector<Pokemon> _fixed_pokemon;  // the pokemon we specify from constructor
    std::vector<PokeTeam> &_best_teams;  // the list of all best teams found
    int _max_score;  // the max score found in the computation
    std::function<int(const Pokemon *, PokeType)> _evaluation;  // the function to compute which team is the best
    int _filter_factor;  // A number to adjust the computation (if 0, we only consider the bad match-ups, this is weak)
    Pokedex _pokedex;  // The pokedex where to search the other pokemon for the team
-   std::array<std::vector<SubTeam>, 2> _all_subteams;  // All the possible subteams (we use also the second only if there are some specified pokemon)
-   std::array<std::array<int, Pokemon::NUM_TYPES>, SubTeam::SIZE> _partial_matchups;
-   std::array<unsigned, SubTeam::SIZE> _members_subteam;
-   std::pair<std::vector<SubTeam> &, std::vector<SubTeam> &> _subteams;  // references to the two subteams
+   std::array<std::shared_ptr<std::vector<SubTeam>>, 2> _all_subteams;  // All the possible subteams (we use also the second only if there are some specified pokemon)
    std::vector<std::pair<unsigned long, unsigned long>> _best_pairings;  // used during merge_best_subteams
+   std::array<std::array<int, static_cast<unsigned>(PokeType::NUM_TYPES)>, SubTeam::SIZE> _partial_matchups;
+   std::array<unsigned, SubTeam::SIZE> _members_subteam;
    unsigned long _next_idx_first_to_consider;
    std::mutex _max_score_lock, _next_idx_first_to_consider_lock;
 };

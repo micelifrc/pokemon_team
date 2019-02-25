@@ -4,6 +4,14 @@
 
 #include "Pokemon.h"
 
+Pokemon::Pokemon(int id_, int total_stats_, std::string name_, PokeType type1, PokeType type2) :
+      _id{static_cast<unsigned>(id_)}, _total_stats{static_cast<unsigned>(total_stats_)}, _name{std::move(name_)},
+      _types{type1, type2} {
+   if (type1 == PokeType::NUM_TYPES or type2 == PokeType::NUM_TYPES) {
+      throw std::logic_error("Cannot create pokemon with type NUM_TYPES. This is not a legal type");
+   }
+}
+
 int Pokemon::resistance(PokeType enemy_type) const {
    return (_types.first == _types.second) ? std::min(-static_cast<int>(effectiveness(enemy_type, _types.first)), 1)
                                           : std::min(-static_cast<int>(effectiveness(enemy_type, _types.first)) -
@@ -20,279 +28,119 @@ int Pokemon::mismatch(PokeType enemy_type) const {
 }
 
 Pokemon::Effectiveness Pokemon::effectiveness(PokeType atk, PokeType def) {
-   switch (def) {
-      case PokeType::Normal: {
-         switch (atk) {
-            case PokeType::Fighting:
-               return Effectiveness::Supereffective;
-            case PokeType::Ghost:
-               return Effectiveness::Ineffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Fighting: {
-         switch (atk) {
-            case PokeType::Flying:
-            case PokeType::Psychic:
-            case PokeType::Fairy:
-               return Effectiveness::Supereffective;
-            case PokeType::Rock:
-            case PokeType::Bug:
-            case PokeType::Dark:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Flying: {
-         switch (atk) {
-            case PokeType::Rock:
-            case PokeType::Electric:
-            case PokeType::Ice:
-               return Effectiveness::Supereffective;
-            case PokeType::Fighting:
-            case PokeType::Bug:
-            case PokeType::Grass:
-               return Effectiveness::NonVeryEffective;
-            case PokeType::Ground:
-               return Effectiveness::Ineffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Poison: {
-         switch (atk) {
-            case PokeType::Ground:
-            case PokeType::Psychic:
-               return Effectiveness::Supereffective;
-            case PokeType::Fighting:
-            case PokeType::Poison:
-            case PokeType::Bug:
-            case PokeType::Grass:
-            case PokeType::Fairy:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Ground: {
-         switch (atk) {
-            case PokeType::Water:
-            case PokeType::Grass:
-            case PokeType::Ice:
-               return Effectiveness::Supereffective;
-            case PokeType::Poison:
-            case PokeType::Rock:
-               return Effectiveness::NonVeryEffective;
-            case PokeType::Electric:
-               return Effectiveness::Ineffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Rock: {
-         switch (atk) {
-            case PokeType::Fighting:
-            case PokeType::Ground:
-            case PokeType::Steel:
-            case PokeType::Water:
-            case PokeType::Grass:
-               return Effectiveness::Supereffective;
-            case PokeType::Normal:
-            case PokeType::Flying:
-            case PokeType::Poison:
-            case PokeType::Fire:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Bug: {
-         switch (atk) {
-            case PokeType::Flying:
-            case PokeType::Rock:
-            case PokeType::Fire:
-               return Effectiveness::Supereffective;
-            case PokeType::Fighting:
-            case PokeType::Ground:
-            case PokeType::Grass:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Ghost: {
-         switch (atk) {
-            case PokeType::Ghost:
-            case PokeType::Dark:
-               return Effectiveness::Supereffective;
-            case PokeType::Poison:
-            case PokeType::Bug:
-               return Effectiveness::NonVeryEffective;
-            case PokeType::Normal:
-            case PokeType::Fighting:
-               return Effectiveness::Ineffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Steel: {
-         switch (atk) {
-            case PokeType::Fighting:
-            case PokeType::Ground:
-            case PokeType::Fire:
-               return Effectiveness::Supereffective;
-            case PokeType::Normal:
-            case PokeType::Flying:
-            case PokeType::Rock:
-            case PokeType::Bug:
-            case PokeType::Steel:
-            case PokeType::Grass:
-            case PokeType::Psychic:
-            case PokeType::Ice:
-            case PokeType::Dragon:
-            case PokeType::Fairy:
-               return Effectiveness::NonVeryEffective;
-            case PokeType::Poison:
-               return Effectiveness::Ineffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Fire: {
-         switch (atk) {
-            case PokeType::Ground:
-            case PokeType::Rock:
-            case PokeType::Water:
-               return Effectiveness::Supereffective;
-            case PokeType::Bug:
-            case PokeType::Steel:
-            case PokeType::Fire:
-            case PokeType::Grass:
-            case PokeType::Ice:
-            case PokeType::Fairy:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Water: {
-         switch (atk) {
-            case PokeType::Grass:
-            case PokeType::Electric:
-               return Effectiveness::Supereffective;
-            case PokeType::Steel:
-            case PokeType::Fire:
-            case PokeType::Water:
-            case PokeType::Ice:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Grass: {
-         switch (atk) {
-            case PokeType::Flying:
-            case PokeType::Poison:
-            case PokeType::Bug:
-            case PokeType::Fire:
-            case PokeType::Ice:
-               return Effectiveness::Supereffective;
-            case PokeType::Ground:
-            case PokeType::Water:
-            case PokeType::Grass:
-            case PokeType::Electric:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Electric: {
-         switch (atk) {
-            case PokeType::Ground:
-               return Effectiveness::Supereffective;
-            case PokeType::Flying:
-            case PokeType::Steel:
-            case PokeType::Electric:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Psychic: {
-         switch (atk) {
-            case PokeType::Bug:
-            case PokeType::Ghost:
-            case PokeType::Dark:
-               return Effectiveness::Supereffective;
-            case PokeType::Fighting:
-            case PokeType::Psychic:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Ice: {
-         switch (atk) {
-            case PokeType::Fighting:
-            case PokeType::Rock:
-            case PokeType::Steel:
-            case PokeType::Fire:
-               return Effectiveness::Supereffective;
-            case PokeType::Ice:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Dragon: {
-         switch (atk) {
-            case PokeType::Ice:
-            case PokeType::Dragon:
-            case PokeType::Fairy:
-               return Effectiveness::Supereffective;
-            case PokeType::Fire:
-            case PokeType::Water:
-            case PokeType::Grass:
-            case PokeType::Electric:
-               return Effectiveness::NonVeryEffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Dark: {
-         switch (atk) {
-            case PokeType::Fighting:
-            case PokeType::Bug:
-            case PokeType::Fairy:
-               return Effectiveness::Supereffective;
-            case PokeType::Ghost:
-            case PokeType::Dark:
-               return Effectiveness::NonVeryEffective;
-            case PokeType::Psychic:
-               return Effectiveness::Ineffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-      case PokeType::Fairy: {
-         switch (atk) {
-            case PokeType::Poison:
-            case PokeType::Steel:
-               return Effectiveness::Supereffective;
-            case PokeType::Fighting:
-            case PokeType::Bug:
-            case PokeType::Dark:
-               return Effectiveness::NonVeryEffective;
-            case PokeType::Dragon:
-               return Effectiveness::Ineffective;
-            default:
-               return Effectiveness::Effective;
-         }
-      }
-   }
+   return _resistance_table[static_cast<unsigned>(atk)][static_cast<unsigned>(def)];
 }
+
+const std::array<std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>, static_cast<unsigned>(PokeType::NUM_TYPES)> Pokemon::_resistance_table{
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Ineffective,
+            Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Super, Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::NonVery,
+            Effectiveness::Regular, Effectiveness::Super, Effectiveness::NonVery, Effectiveness::Ineffective,
+            Effectiveness::Super, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::Super, Effectiveness::Regular,
+            Effectiveness::Super, Effectiveness::NonVery},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::Super, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super,
+            Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::NonVery,
+            Effectiveness::NonVery, Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::NonVery,
+            Effectiveness::Ineffective, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Super},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Ineffective, Effectiveness::Super,
+            Effectiveness::Regular, Effectiveness::Super, Effectiveness::NonVery, Effectiveness::Regular,
+            Effectiveness::Super, Effectiveness::Super, Effectiveness::Regular, Effectiveness::NonVery,
+            Effectiveness::Super, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::Super, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::Super, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::NonVery, Effectiveness::NonVery,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::NonVery,
+            Effectiveness::NonVery, Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Super,
+            Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Super, Effectiveness::NonVery},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Ineffective, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::NonVery, Effectiveness::NonVery, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Super},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::Super, Effectiveness::Regular,
+            Effectiveness::Super, Effectiveness::NonVery, Effectiveness::NonVery, Effectiveness::Super,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super, Effectiveness::NonVery,
+            Effectiveness::Regular, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Super, Effectiveness::Super, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Super, Effectiveness::NonVery, Effectiveness::NonVery,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::NonVery,
+            Effectiveness::Regular, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::NonVery,
+            Effectiveness::Super, Effectiveness::Super, Effectiveness::NonVery, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::NonVery, Effectiveness::Super, Effectiveness::NonVery,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::NonVery,
+            Effectiveness::Regular, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular,
+            Effectiveness::Ineffective, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super, Effectiveness::NonVery,
+            Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::NonVery,
+            Effectiveness::Regular, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular, Effectiveness::Super,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Ineffective, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular,
+            Effectiveness::Super, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::NonVery, Effectiveness::NonVery, Effectiveness::Super,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::Super,
+            Effectiveness::Regular, Effectiveness::Regular},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super,
+            Effectiveness::Regular, Effectiveness::Ineffective},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::NonVery},
+      std::array<Pokemon::Effectiveness, static_cast<unsigned>(PokeType::NUM_TYPES)>{
+            Effectiveness::Regular, Effectiveness::Super, Effectiveness::Regular, Effectiveness::NonVery,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::NonVery, Effectiveness::NonVery, Effectiveness::Regular, Effectiveness::Regular,
+            Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Regular, Effectiveness::Super,
+            Effectiveness::Super, Effectiveness::Regular}
+};
 
 bool share_type(const Pokemon &lhs, const Pokemon &rhs) {
    return lhs.types().first == rhs.types().first or lhs.types().first == rhs.types().second or
