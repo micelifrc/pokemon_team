@@ -6,35 +6,31 @@
 #include <thread>
 
 FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
-                           unsigned regions_, unsigned tipology_, bool consider_defence_,
-                           bool consider_offence_, int filter_factor_, bool allow_repetitions_) :
-      _fixed_pokemon{fixed_pokemon_}, _best_teams{best_teams_}, _max_score{std::numeric_limits<int>::min()},
-      _filter_factor{filter_factor_} {
-
+                           unsigned regions_, unsigned tipology_) :
+      _fixed_pokemon{fixed_pokemon_}, _best_teams{best_teams_}, _max_score{std::numeric_limits<int>::min()} {
    if (_fixed_pokemon.size() > PokeTeam::SIZE) {
       throw std::invalid_argument(
             "Cannot complete at team that already has more than " + std::to_string(PokeTeam::SIZE) + " pokemon");
    }
+   _pokedex.make(regions_, tipology_);
+}
 
-   if (not consider_defence_ and not consider_offence_) {
+int FindBestTeam::find_best_teams(unsigned num_threads, bool consider_defence, bool consider_offence,
+                                  bool allow_repetitions,
+                                  const std::array<int, static_cast<unsigned>(PokeType::NUM_TYPES)> &filter_factors) {
+
+   if (not consider_defence and not consider_offence) {
       throw std::invalid_argument("At least one between consider_defence and consider_offence should be set to true");
    }
-
-   _repetition_step = allow_repetitions_ ? 0 : 1;
-   if (consider_defence_ and consider_offence_) {
+   if (consider_defence and consider_offence) {
       _evaluation = &Pokemon::mismatch;
-   } else if (consider_defence_) {
+   } else if (consider_defence) {
       _evaluation = &Pokemon::resistance;
    } else {
       _evaluation = &Pokemon::offensive_effectiveness;
    }
-   _pokedex.make(regions_, tipology_);
-}
-
-int FindBestTeam::find_best_teams(unsigned num_threads) {
-   _best_teams.clear();
-   _max_score = 0;
-   _best_pairings.clear();
+   _repetition_step = allow_repetitions ? 0 : 1;
+   _filter_factors = filter_factors;
 
    form_all_subteams(0);
    std::sort(_all_subteams[0]->begin(), _all_subteams[0]->end(),
@@ -47,11 +43,24 @@ int FindBestTeam::find_best_teams(unsigned num_threads) {
                 [](const SubTeam &lhs, const SubTeam &rhs) { return lhs.upper_bd > rhs.upper_bd; });
    }
 
+   initialize_all_rectangles();
+
+   _best_teams.clear();
+   _max_score = 0;
+   _best_pairings.clear();
    merge_best_subteams(num_threads);
    std::sort(_best_teams.begin(), _best_teams.end(),
              [](const PokeTeam &lhs, const PokeTeam &rhs) { return lhs > rhs; });
 
    return _max_score;
+}
+
+int FindBestTeam::find_best_teams(unsigned num_threads, bool consider_defence, bool consider_offence,
+                                  bool allow_repetitions, int filter_factor) {
+   return find_best_teams(num_threads, consider_defence, consider_offence, allow_repetitions,
+                          {filter_factor, filter_factor, filter_factor, filter_factor, filter_factor, filter_factor,
+                           filter_factor, filter_factor, filter_factor, filter_factor, filter_factor, filter_factor,
+                           filter_factor, filter_factor, filter_factor, filter_factor, filter_factor, filter_factor});
 }
 
 void FindBestTeam::form_all_subteams(unsigned subteam_idx) {
@@ -100,6 +109,57 @@ void FindBestTeam::form_all_subteams_iteration(unsigned subteam_idx, unsigned ne
    }
 }
 
+void FindBestTeam::initialize_all_rectangles() {
+   std::array<std::shared_ptr<std::vector<UBRange>>, 2> _all_ubranges = {std::make_shared<std::vector<UBRange>>(),
+                                                                         std::make_shared<std::vector<UBRange>>()};
+   update_ubranges(*_all_subteams[0], *_all_ubranges[0]);
+   if (_fixed_pokemon.empty()) {
+      _all_ubranges[1] = _all_ubranges[0];
+   } else {
+      update_ubranges(*_all_subteams[1], *_all_ubranges[1]);
+   }
+   std::vector<UBRectangle> all_rect;
+   for (const auto range0 : *_all_ubranges[0]) {
+      for (const auto range1 : *_all_ubranges[1]) {
+         all_rect.emplace_back(range0.start, range0.end, range1.start, range1.end, range0.upper_bd + range1.upper_bd);
+      }
+   }
+   std::sort(all_rect.begin(), all_rect.end(),
+             [](const UBRectangle &lhs, const UBRectangle &rhs) { return lhs.upper_bd > rhs.upper_bd; });
+   _all_rectangles.clear();
+   for (auto rect : all_rect) {
+      if (_all_rectangles.empty() or _all_rectangles.back().front().upper_bd > rect.upper_bd) {
+         _all_rectangles.emplace_back(1, rect);
+      } else {
+         _all_rectangles.back().emplace_back(rect);
+      }
+   }
+   _rectangle_iter = _all_rectangles.begin();
+}
+
+void FindBestTeam::update_ubranges(const std::vector<SubTeam> &all_subteams, std::vector<UBRange> &all_ubranges) {
+   for (unsigned long idx = 0; idx != all_subteams.size(); ++idx) {
+      if (all_ubranges.empty() or all_ubranges.back().upper_bd > all_subteams[idx].upper_bd) {
+         all_ubranges.emplace_back(idx, idx + 1, all_subteams[idx].upper_bd);
+      } else {
+         ++all_ubranges.back().end;
+      }
+   }
+}
+
+void FindBestTeam::update_segments() {
+   if (_rectangle_iter == _all_rectangles.end()) {
+      throw std::logic_error("Cannot update using invalid _rectangle_iter iterator");
+   }
+   for (auto const &rect : *_rectangle_iter) {
+      for (unsigned long const_coord = rect.start[0]; const_coord != rect.end[0]; ++const_coord) {
+         _segments.emplace_back(const_coord, rect.start[1], rect.end[1], rect.upper_bd);
+      }
+   }
+
+   ++_rectangle_iter;
+}
+
 void FindBestTeam::merge_best_subteams(unsigned num_threads) {
    if (_all_subteams[0]->size() < num_threads) {
       num_threads = static_cast<unsigned>(_all_subteams[0]->size());
@@ -107,7 +167,6 @@ void FindBestTeam::merge_best_subteams(unsigned num_threads) {
    std::vector<std::thread> threads;
    threads.reserve(num_threads);
 
-   _next_idx_first_to_consider = 0;
    for (unsigned thread_idx = 0; thread_idx != num_threads; ++thread_idx) {
       threads.emplace_back(&FindBestTeam::merge_best_subteams_iteration, this);
    }
@@ -119,23 +178,29 @@ void FindBestTeam::merge_best_subteams(unsigned num_threads) {
 }
 
 void FindBestTeam::merge_best_subteams_iteration() {
-   unsigned long idx_first = 0;
-   while (idx_first < _all_subteams[0]->size()) {
-      _next_idx_first_to_consider_lock.lock();
-      idx_first = _next_idx_first_to_consider++;
-      _next_idx_first_to_consider_lock.unlock();
-      for (unsigned long idx_second = 0; idx_second != _all_subteams[1]->size(); ++idx_second) {
-         if ((*_all_subteams[0])[idx_first].upper_bd + (*_all_subteams[1])[idx_second].upper_bd < _max_score) {
-            break;
+   while (true) {
+      _segments_lock.lock();
+      if (_segments.empty()) {
+         if (_rectangle_iter == _all_rectangles.end()) {
+            return;
          }
-         if ((*_all_subteams[0])[idx_first][SubTeam::SIZE - 1] >
-             (*_all_subteams[1])[idx_second][_fixed_pokemon.size() / 2]) {
+         update_segments();
+      }
+      UBSegment segment = _segments.back();
+      _segments.pop_back();
+      _segments_lock.unlock();
+      for (unsigned long idx = segment.start; idx != segment.end; ++idx) {
+         if (segment.upper_bd < _max_score) {
+            return;
+         }
+         if ((*_all_subteams[0])[segment.const_coord][SubTeam::SIZE - 1] + _repetition_step >
+             (*_all_subteams[1])[idx][_fixed_pokemon.size() / 2]) {
             continue;  // we want the team to be in increasing order of indices
          }
          int pairing_scoring = 0;
          for (unsigned type_idx = 0; type_idx != static_cast<unsigned>(PokeType::NUM_TYPES); ++type_idx) {
-            pairing_scoring += std::min((*_all_subteams[0])[idx_first].all_matchups[type_idx] +
-                                        (*_all_subteams[1])[idx_second].all_matchups[type_idx], _filter_factor);
+            pairing_scoring += std::min((*_all_subteams[0])[segment.const_coord].all_matchups[type_idx] +
+                                        (*_all_subteams[1])[idx].all_matchups[type_idx], _filter_factors[type_idx]);
          }
 
          _max_score_lock.lock();
@@ -144,7 +209,7 @@ void FindBestTeam::merge_best_subteams_iteration() {
             _best_pairings.clear();
          }
          if (pairing_scoring == _max_score) {
-            _best_pairings.emplace_back(idx_first, idx_second);
+            _best_pairings.emplace_back(segment.const_coord, idx);
          }
          _max_score_lock.unlock();
       }

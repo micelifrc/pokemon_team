@@ -7,7 +7,7 @@
 
 int main() {
    // set the following parameters
-   std::vector<Pokemon> fixed_pokemon{};
+   std::vector<Pokemon> fixed_pokemon{Pokemon(65, 500, "Alakazam", PokeType::Psychic)};
    std::vector<PokeTeam> best_teams;
    unsigned regions = RegionsFlag::KANTO | RegionsFlag::JOHTO | RegionsFlag::HOENN;
    unsigned typologies = TypologyFlag::PREEVOLUTIONS | TypologyFlag::PSEUDOLEGENDARIES | TypologyFlag::FOSSILS |
