@@ -5,9 +5,8 @@
 #include "FindBestTeam.h"
 #include <thread>
 
-FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
-                           unsigned regions_, unsigned tipology_) :
-      _fixed_pokemon{fixed_pokemon_}, _best_teams{best_teams_}, _max_score{std::numeric_limits<int>::min()} {
+FindBestTeam::FindBestTeam(std::vector<PokeTeam> &best_teams_, unsigned regions_, unsigned tipology_) :
+      _best_teams{best_teams_}, _max_score{std::numeric_limits<int>::min()} {
    if (_fixed_pokemon.size() > PokeTeam::SIZE) {
       throw std::invalid_argument(
             "Cannot complete at team that already has more than " + std::to_string(PokeTeam::SIZE) + " pokemon");
@@ -15,9 +14,10 @@ FindBestTeam::FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vect
    _pokedex.make(regions_, tipology_);
 }
 
-int FindBestTeam::find_best_teams(unsigned num_threads, bool consider_defence, bool consider_offence,
-                                  bool allow_repetitions,
-                                  const std::array<int, static_cast<unsigned>(PokeType::NUM_TYPES)> &filter_factors) {
+int
+FindBestTeam::find_best_teams(const std::vector<Pokemon> &fixed_pokemon, unsigned num_threads, bool consider_defence,
+                              bool consider_offence, bool allow_repetitions,
+                              const std::array<int, static_cast<unsigned>(PokeType::NUM_TYPES)> &filter_factors) {
 
    if (not consider_defence and not consider_offence) {
       throw std::invalid_argument("At least one between consider_defence and consider_offence should be set to true");
@@ -29,6 +29,7 @@ int FindBestTeam::find_best_teams(unsigned num_threads, bool consider_defence, b
    } else {
       _evaluation = &Pokemon::offensive_effectiveness;
    }
+   _fixed_pokemon = fixed_pokemon;
    _repetition_step = allow_repetitions ? 0 : 1;
    _filter_factors = filter_factors;
 
@@ -55,9 +56,10 @@ int FindBestTeam::find_best_teams(unsigned num_threads, bool consider_defence, b
    return _max_score;
 }
 
-int FindBestTeam::find_best_teams(unsigned num_threads, bool consider_defence, bool consider_offence,
+int FindBestTeam::find_best_teams(const std::vector<Pokemon> &fixed_pokemon, std::vector<PokeTeam> &best_teams_,
+                                  unsigned num_threads, bool consider_defence, bool consider_offence,
                                   bool allow_repetitions, int filter_factor) {
-   return find_best_teams(num_threads, consider_defence, consider_offence, allow_repetitions,
+   return find_best_teams(fixed_pokemon, num_threads, consider_defence, consider_offence, allow_repetitions,
                           {filter_factor, filter_factor, filter_factor, filter_factor, filter_factor, filter_factor,
                            filter_factor, filter_factor, filter_factor, filter_factor, filter_factor, filter_factor,
                            filter_factor, filter_factor, filter_factor, filter_factor, filter_factor, filter_factor});

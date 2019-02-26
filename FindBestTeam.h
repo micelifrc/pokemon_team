@@ -22,21 +22,24 @@ public:
     * @param filter_factors_ Values in order to also consider effectiveness, and not just weakness.
     * @param allow_type_repetitions_ Do you allow two pokemon in your team to share (at least) one type?
     */
-   FindBestTeam(const std::vector<Pokemon> &fixed_pokemon_, std::vector<PokeTeam> &best_teams_,
-                unsigned regions_ = RegionsFlag::KANTO | RegionsFlag::JOHTO | RegionsFlag::HOENN | RegionsFlag::SINNOH |
-                                    RegionsFlag::UNOVA | RegionsFlag::KALOS | RegionsFlag::ALOLA,
-                unsigned tipology_ = TypologyFlag::STARTERS | TypologyFlag::FOSSILS |
-                                     TypologyFlag::PSEUDOLEGENDARIES | TypologyFlag::ALOLAFORMS |
-                                     TypologyFlag::PREEVOLUTIONS);
+   explicit FindBestTeam(std::vector<PokeTeam> &best_teams_,
+                         unsigned regions_ = RegionsFlag::KANTO | RegionsFlag::JOHTO | RegionsFlag::HOENN |
+                                             RegionsFlag::SINNOH | RegionsFlag::UNOVA | RegionsFlag::KALOS |
+                                             RegionsFlag::ALOLA,
+                         unsigned tipology_ = TypologyFlag::STARTERS | TypologyFlag::FOSSILS |
+                                              TypologyFlag::PSEUDOLEGENDARIES | TypologyFlag::ALOLAFORMS |
+                                              TypologyFlag::PREEVOLUTIONS);
 
    // Will find the best possible team, for the first _num_fixed_pokemon already fixed in _current_team
-   int find_best_teams(unsigned num_threads = 1, bool consider_defence = true, bool consider_offence = false,
-                       bool allow_repetitions = true,
-                       const std::array<int, static_cast<unsigned>(PokeType::NUM_TYPES)> &filter_factors =
-                             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
+   int
+   find_best_teams(const std::vector<Pokemon> &fixed_pokemon, unsigned num_threads = 1, bool consider_defence = true,
+                   bool consider_offence = false, bool allow_repetitions = true,
+                   const std::array<int, static_cast<unsigned>(PokeType::NUM_TYPES)> &filter_factors =
+                         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
 
-   int find_best_teams(unsigned num_threads, bool consider_defence, bool consider_offence, bool allow_repetitions,
-                       int filter_factor);
+   int
+   find_best_teams(const std::vector<Pokemon> &fixed_pokemon, std::vector<PokeTeam> &best_teams_, unsigned num_threads,
+                   bool consider_defence, bool consider_offence, bool allow_repetitions, int filter_factor);
 
 private:
    struct UBRange {
